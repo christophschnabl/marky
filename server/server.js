@@ -13,7 +13,6 @@ app.use(bodyparser.json())
 
 app.use('/', routes);
 
-app.get("/", function(req, res){
 app.get("/document/uuid:", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
