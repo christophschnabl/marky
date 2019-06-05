@@ -4,6 +4,7 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 
+// client: { document : clientId } 
 let clients = [];
 
 app.get("/document/uuid:", function(req, res) {
