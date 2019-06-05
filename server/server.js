@@ -4,10 +4,15 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
+const bodyparser = require('body-parser');
 
 let clientCount = 0;
 
 let clients = [];
+
+app.use(bodyparser.urlencoded({
+  extended: true
+}));
 
 app.use('/', routes);
 

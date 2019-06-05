@@ -5,6 +5,7 @@ const express = require('express'),
 
 
 router.get('/render', function(req, res) {
+  console.log(req.body);
   res.send(markdown.Render('# hustensaft'));
 });
 
