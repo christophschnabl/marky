@@ -6,8 +6,7 @@ const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
 
-let clientCount = 0;
-
+// client: { document : clientId }
 let clients = [];
 
 app.use(bodyparser.json())
@@ -15,33 +14,34 @@ app.use(bodyparser.json())
 app.use('/', routes);
 
 app.get("/", function(req, res){
+app.get("/document/uuid:", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
 
 //app.use(express.static(__dirname + "/public"));
 
-function onConnection(socket){
-  clientCount++;
-  console.log("Clients connected: ");
-  console.log(clientCount);
-  console.log(clients);
+function onConnection(clientSocket) {
+    if (!clients.includes(clientSocket.id)) {
+        clients.push(clientSocket.id);
+    }
 
-  socket.on("sendName", function(name) {
-      clients.push(name);
-  });
+    clientSocket.on("typing", onTyping);
 
-  socket.on("typing", function(data) {
-    //console.log("text: " + text);
-    io.emit("typing", data);
+    clientSocket.on("disconnect", () => onDisconnect(clientSocket.id));
 
-  });
+}
 
-  socket.on("disconnect", function(){
-    clientCount--;
-    console.log("Clients connected: ");
-    console.log(clientCount);
-  });
-  //socket.on("type", (data) => socket.broadcast.emit("type", data));
+function onDisconnect(clientId) {
+    clients = clients.filter(client => client !== clientId);
+    console.log(clients);
+}
+
+function onTyping(typeData) {
+    io.emit("typing", typeData);
+}
+
+function onSendName(clientUuid) {
+    clients.push(clientUuid);
 }
 
 io.on("connection", onConnection);
