@@ -10,9 +10,7 @@ let clientCount = 0;
 
 let clients = [];
 
-app.use(bodyparser.urlencoded({
-  extended: true
-}));
+app.use(bodyparser.json())
 
 app.use('/', routes);
 
