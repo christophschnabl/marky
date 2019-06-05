@@ -3,10 +3,13 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
+const routes = require('./routes/routes.js');
 
 let clientCount = 0;
 
 let clients = [];
+
+app.use('/', routes);
 
 app.get("/", function(req, res){
   res.sendFile(__dirname + "/client/index.html");
@@ -19,7 +22,7 @@ function onConnection(socket){
   console.log("Clients connected: ");
   console.log(clientCount);
   console.log(clients);
-  
+
   socket.on("sendName", function(name) {
       clients.push(name);
   });
