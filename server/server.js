@@ -13,7 +13,7 @@ app.use(bodyparser.json())
 
 app.use('/', routes);
 
-app.get("/document/uuid:", function(req, res) {
+app.get("", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
 
@@ -24,14 +24,21 @@ function onConnection(clientSocket) {
         clients.push(clientSocket.id);
     }
 
+    clientSocket.on("receiveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket.id, client));
+
     clientSocket.on("typing", onTyping);
 
     clientSocket.on("disconnect", () => onDisconnect(clientSocket.id));
 
 }
 
-function onDisconnect(clientId) {
-    clients = clients.filter(client => client !== clientId);
+function onRecieveDocumentUuid(clientSocketId, client) {
+    console.log(clientSocketId);
+    console.log(client);
+}
+
+function onDisconnect(clientSocketId) {
+    clients = clients.filter(client => client !== clientSocketId);
     console.log(clients);
 }
 
