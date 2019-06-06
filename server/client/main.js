@@ -11,13 +11,19 @@ $(function () {
   const socket = io();
 
   //socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
-  socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": "flfuffy"});
+
 
   socket.on("initialDocumentContent", initialContent => {
       $('#editor').val(initialContent);
   });
 
-  $("#editor").on("input", function(e){
+  $("#connect").on("click", function(e) {
+      socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
+          //socket.emit("saveDocument");
+  });
+
+
+  $("#editor").on("input", function(e) {
     e.preventDefault();
 
     //cursor position code from

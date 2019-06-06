@@ -13,16 +13,7 @@ mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net
     .catch((err) => console.error(err))
 ;
 
-/*
-var fluffy = new Document({ documentUuid: 'flfuffy' });
-
-fluffy.save(function (err, fluffy) {
-  if (err) return console.error(err);
-  console.log(fluffy);
-});
-*/
-
-// documents : [{"documentUUid" : [{"clientUuid", "clientSocketId"}]}]
+// documents : [{"document" : [{"clientUuid", "clientSocketId"}]}]
 // clients = []
 
 let documents = [];
@@ -45,6 +36,30 @@ function getAllClientsForDocumemt(documentUuid) {
     //return clients.filter(client => client )
 }
 
+function getAllClientsInSameDocument(clientSocketId) {
+    for (let i = 0; i < documents.length; i++) {
+        for (let j = 0; j < documents[i].clients.length; j++) {
+            const client =  documents[i].clients[j];
+
+            if (client.clientSocketId === clientSocketId) {
+                return documents[i].clients;
+            }
+        }
+    }
+}
+
+function getDocumentByClientSocketId(clientSocketId) {
+    for (let i = 0; i < documents.length; i++) {
+        for (let j = 0; j < documents[i].clients.length; j++) {
+            const client =  documents[i].clients[j];
+
+            if (client.clientSocketId === clientSocketId) {
+                return documents[i].document;
+            }
+        }
+    }
+}
+
 function onConnection(clientSocket) {
     /*if (!clients.includes(clientSocket.Uuid)) {
         clients.push(clientSocket.Uuid);
@@ -52,7 +67,9 @@ function onConnection(clientSocket) {
 
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
-    clientSocket.on("typing", onTyping);
+    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket.id, data)); //dk yet what data needs to be
+
+    clientSocket.on("typing", (typeData) => onTyping(clientSocket.id, typeData));
 
     clientSocket.on("disconnect", () => onDisconnect(clientSocket.id));
 
@@ -68,39 +85,62 @@ function onRecieveDocumentUuid(clientSocket, client) {
     let containsDocument = false;
 
     documents.forEach(document => { //refactor -> in db nachschauen und gleich inhalt vom dokument mitbekommen
-        if (document.documentUuid === client.documentUuid) {
+        if (document.document.documentUuid === client.documentUuid) {
             containsDocument = document;
         }
     });
 
-    Document.find({"documentUuid" : client.documentUuid}, (err, document) => {
-        if (err) console.err(err);
+    if (!containsDocument) {
+        Document.find({"documentUuid" : client.documentUuid}, (err, document) => {
+            if (err) console.error(err);
 
-        console.log(document);
-    });
+            if (document.length > 0) {
+                containsDocument = true;
+            }
+        });
+    }
 
     if (containsDocument) {
         documents.forEach(document => {
-            if (document.documentUuid === client.documentUuid) {
+            if (document.document.documentUuid === client.documentUuid) {
                 document.clients.push(newClient);
             }
         });
-    } else {
-        //dokument in db erstellen!
-        documents.push({"documentUuid" : client.documentUuid, "content" : "hansiinitalContent", "clients" : [newClient]});
+    } else { //create new Document and save it to db
+        const document = new Document({documentUuid : client.documentUuid, content : "", owner : newClient.clientUuid});
+        /*document.save((err) => {
+            if (err) console.error(err);
+        });*/
+
+        documents.push({"document" : document, "content" : "hansiinitalContent", "clients" : [newClient]});
     }
 
     //send document content to the newly joined user
     clientSocket.emit("initialDocumentContent", containsDocument.content);
 }
 
+function onDocumentSave(clientSocketId, data) {
+    const document = getDocumentByClientSocketId(clientSocketId);
+    console.log(document);
+}
+
 function onDisconnect(clientSocketId) {
     /*clients = clients.filter(client => client !== clientSocketId);
     console.log(clients);*/
+
+    //send to other users that current user disconnected from channel
 }
 
-function onTyping(typeData) {
-    io.emit("typing", typeData);
+function onTyping(clientSocketId, typeData) {
+    //io.emit("typing", typeData);
+    const clients = getAllClientsInSameDocument(clientSocketId);
+
+    for (let i = 0; i < clients.length; i++) {
+        io.to(clients[i].clientSocketId).emit("typing", typeData);
+    }
+    /*clients.foreach(client => {
+        io.broadcast.to(client.clientSocketId).emit('typing', typeDate);
+    });*/
 }
 
 function onSendName(clientUuid) {
