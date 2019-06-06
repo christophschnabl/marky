@@ -1,6 +1,7 @@
 const { Render } = require('../modules/markdown.js');
 const { Verify } = require('../modules/googleauth.js');
 const { User } = require('../models/user.js');
+const { Document } = require('../models/document.js');
 const express = require('express'),
       router = express.Router();
 
@@ -48,5 +49,18 @@ router.get('/users/:id/documents', function(req, res){
     res.send(user.documents);
   });
 });
+
+router.post('/users/:id/documents', function(req, res){
+  const id = req.params.id;
+  if(req.body.content !== undefined){
+    Document.create({ content: req.body.content, ownerUuid: id}, function(err, document){
+      if(err) res.send(err);
+      res.send(document);
+    })
+  }else{
+    res.status(BADREQUEST.StatusCode);
+    res.send(BADREQUEST);
+  }
+})
 
 module.exports = router;
