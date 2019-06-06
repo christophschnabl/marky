@@ -6,12 +6,21 @@ const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
 const mongoose = require("mongoose");
+const Document = require("./models/document.js");
 
-mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/test?retryWrites=true&w=majority",  { useNewUrlParser: true } )
+mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/marky?retryWrites=true&w=majority",  { useNewUrlParser: true } )
     .then(() =>  console.log("connection successful"))
     .catch((err) => console.error(err))
 ;
 
+/*
+var fluffy = new Document({ documentUuid: 'flfuffy' });
+
+fluffy.save(function (err, fluffy) {
+  if (err) return console.error(err);
+  console.log(fluffy);
+});
+*/
 
 
 // documents : [{"documentUUid" : [{"clientUuid", "clientSocketId"}]}]
