@@ -10,7 +10,8 @@ $(function () {
   let clientsCursorsPosition = [];
   const socket = io();
 
-  socket.emit("sendName", uuidv4());
+  //socket.emit("sendName", uuidv4());
+  socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": "document1"});
 
   $("#editor").on("input", function(e){
     e.preventDefault();
