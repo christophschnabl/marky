@@ -30,7 +30,7 @@ function onConnection(clientSocket) {
         clients.push(clientSocket.Uuid);
     }*/
 
-    clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket.id, client));
+    clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
     clientSocket.on("typing", onTyping);
 
@@ -38,22 +38,20 @@ function onConnection(clientSocket) {
 
 }
 
-function onRecieveDocumentUuid(clientSocketId, client) {
+function onRecieveDocumentUuid(clientSocket, client) {
     //add clients to their respective document room
     let newClient = {
-        "clientSocketId" : clientSocketId,
+        "clientSocketId" : clientSocket.id,
         "clientUuid" : client.clientUuid
     };
 
     let containsDocument = false;
 
-    documents.forEach(document => { //refactor
+    documents.forEach(document => { //refactor -> in db nachschauen und gleich inhalt vom dokument mitbekommen
         if (document.documentUuid === client.documentUuid) {
-            containsDocument = true;
+            containsDocument = document;
         }
     });
-
-    console.log(containsDocument);
 
     if (containsDocument) {
         documents.forEach(document => {
@@ -62,26 +60,12 @@ function onRecieveDocumentUuid(clientSocketId, client) {
             }
         });
     } else {
-        documents.push({"documentUuid" : client.documentUuid, "clients" : [newClient]});
+        //dokument in db erstellen!
+        documents.push({"documentUuid" : client.documentUuid, "content" : "hansiinitalContent", "clients" : [newClient]});
     }
 
-    documents.forEach(document => {
-        console.log(document);
-        document.clients.forEach(client => {
-            //console.log(client);
-        });
-    });
-    /*if (clients.documentUuid === client.documentUuid) {
-
-    } else {
-        clients.push({"documentUuid" : client.documentUuid, "clients" : [newClient]})
-    }
-    console.log(clientSocketId);
-    console.log(client.clientUuid);
-    console.log(client.documentUuid);
-    */
-    //send document
-    //socket.broadcast.to(socketid).emit('message', 'for your eyes only');
+    //send document content to the newly joined user
+    clientSocket.emit("initialDocumentContent", containsDocument.content);
 }
 
 function onDisconnect(clientSocketId) {

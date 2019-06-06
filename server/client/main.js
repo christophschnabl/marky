@@ -13,6 +13,10 @@ $(function () {
   //socket.emit("sendName", uuidv4());
   socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
 
+  socket.on("initialDocumentContent", initialContent => {
+      $('#editor').val(initialContent);
+  });
+
   $("#editor").on("input", function(e){
     e.preventDefault();
 
