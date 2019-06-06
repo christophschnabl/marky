@@ -1,4 +1,5 @@
-const markdown = require('../modules/markdown.js')
+const markdown = require('../modules/markdown.js');
+const { Verify } = require('../modules/googleauth.js');
 const express = require('express'),
       router = express.Router();
 
@@ -15,5 +16,15 @@ router.get('/render', function(req, res) {
     res.send(BADREQUEST);
   }
 });
+
+router.post('/verifyid', function(req, res) {
+  if(req.body.id_token != undefined){
+    Verify(req.body.id_token).catch(console.err);
+    res.send("verified");
+  }else{
+    res.status(BADREQUEST.StatusCode);
+    res.send(BADREQUEST);
+  }
+})
 
 module.exports = router;

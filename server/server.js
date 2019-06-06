@@ -17,6 +17,10 @@ app.get("/document/uuid:", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
 
+app.get('/login', function(req, res) {
+  res.sendFile(__dirname + "/client/login.html");
+});
+
 //app.use(express.static(__dirname + "/public"));
 
 function onConnection(clientSocket) {
