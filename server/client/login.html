@@ -13,13 +13,16 @@
   <div class="g-signin2" data-onsuccess="onSignIn"></div>
 </body>
 <script>
-function verify(id){
+function verify(id, name, imageUrl, email){
   const obj = {
-    "id_token": id
-  }
+    "id_token": id,
+    "name":name,
+    "imageUrl":imageUrl,
+    "email":email
+  };
 
   $.ajax({
-    url: "/verifyid",
+    url: "/users",
     method: "POST",
     data: JSON.stringify(obj),
     contentType: "application/json; charset=utf-8",
@@ -31,9 +34,16 @@ function verify(id){
     }
   });
 }
+
 function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  const name = profile.getName();
+  const imageUrl = profile.getImageUrl();
+  const email = profile.getEmail() || ""; // Email is null if the 'email' scope is not present.
   const id_token = googleUser.getAuthResponse().id_token;
-  verify(id_token);
+
+  verify(id_token,name, imageUrl, email);
 }
+
 </script>
 </html>
