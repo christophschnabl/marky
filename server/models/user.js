@@ -1,9 +1,8 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  userUuid: {
-      type: String,
-      unique: true,
+  id_token: {
+    type: String
   },
   name : {
     type: String
@@ -13,9 +12,14 @@ const userSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String
+  },
+  documents: {
+    type: [String] //documentUUids
   }
 });
 
 const User = mongoose.model('User', userSchema);
 
-export default User;
+module.exports = {
+  User: User
+}
