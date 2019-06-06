@@ -30,7 +30,7 @@
     $("#editor").on("input", function(e){
       e.preventDefault();
 
-      //line 23 code from
+      //cursor position code from
       //https://stackoverflow.com/a/7745958/6267827
       const cursorPosition = $('#editor').prop("selectionStart");
 
@@ -48,7 +48,7 @@
     socket.on('typing', function(data){
         $('#editor').val(data.text);
 
-        //clientsCursorsPosition = 
+        //clientsCursorsPosition =
         //data.ClientsCursorPosition.forEach()
         //alert(data.cursorPosition);
       });
