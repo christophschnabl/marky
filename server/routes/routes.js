@@ -31,14 +31,22 @@ router.post('/users', function(req, res) {
 
     const options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false };
 
-    User.findOneAndUpdate(query, update, options, function(error, doc) {
-        if (error) res.send(error); //TODO: Better error handling
+    User.findOneAndUpdate(query, update, options, function(err, doc) {
+        if (err) res.send(err); //TODO: Better error handling
         res.send(doc);
     });
   }else{
     res.status(BADREQUEST.StatusCode);
     res.send(BADREQUEST);
   }
-})
+});
+
+router.get('/users/:id/documents', function(req, res){
+  const id = req.params.id;
+  User.findById(id, function (err, user) {
+    if(err) res.send(err);
+    res.send(user.documents);
+  });
+});
 
 module.exports = router;
