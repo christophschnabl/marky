@@ -77,6 +77,14 @@ function onConnection(clientSocket) {
 }
 
 function onRecieveDocumentUuid(clientSocket, client) {
+    console.log(clientSocket.rooms);
+    Object.keys(clientSocket.rooms).filter(room => {
+        if (room !== clientSocket.id) {
+            clientSocket.leave(room);
+            return true;
+        }
+    });
+
     clientSocket.join(client.documentUuid);
     console.log(clientSocket.id + " connected to + " + client.documentUuid);
     let clients;
@@ -170,7 +178,23 @@ function onTyping(clientSocket, typeData) {
     //const clients = getAllClientsInSameDocument(clientSocketId);
     let clients;
 
-    let room = "hansi";
+
+    console.log(clientSocket.rooms);
+
+    let rooms = Object.keys(clientSocket.rooms).filter(room => {
+        if (room === clientSocket.id) {
+            return false;
+        } {
+            return true;
+        }
+    });
+
+    console.log(rooms);
+
+    let room = rooms[0];
+
+    console.log(room);
+
     io.to(room).emit('typing', typeData);
 
 
