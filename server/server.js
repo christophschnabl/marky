@@ -5,6 +5,14 @@ const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/test?retryWrites=true&w=majority",  { useNewUrlParser: true } )
+    .then(() =>  console.log("connection successful"))
+    .catch((err) => console.error(err))
+;
+
+
 
 // documents : [{"documentUUid" : [{"clientUuid", "clientSocketId"}]}]
 // clients = []
