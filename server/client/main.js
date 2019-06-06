@@ -7,7 +7,13 @@ function uuidv4() {
 }
 
 $(function () {
-  let clientsCursorsPosition = [];
+  const socket = io();
+
+  $("#connect").on("click", function(e) {
+        socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
+            //socket.emit("saveDocument");
+    });
+  /*let clientsCursorsPosition = [];
   const socket = io();
 
   //socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
@@ -22,7 +28,7 @@ $(function () {
           //socket.emit("saveDocument");
   });
 
-
+*/
   $("#editor").on("input", function(e) {
     e.preventDefault();
 
@@ -32,7 +38,7 @@ $(function () {
 
     const data = {
         "text" : $("#editor").val(),
-        "ClientsCursorPosition" : clientsCursorsPosition
+        "ClientsCursorPosition" : 0
     };
 
 
@@ -41,10 +47,11 @@ $(function () {
     return false;
   });
 
+
   socket.on('typing', function(data){
       $('#editor').val(data.text);
       //clientsCursorsPosition =
       //data.ClientsCursorPosition.forEach()
       //alert(data.cursorPosition);
-    });
+  });
 });

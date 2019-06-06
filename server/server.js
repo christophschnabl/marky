@@ -17,6 +17,7 @@ mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net
 // clients = []
 
 let documents = [];
+let users = [];
 
 app.use(bodyparser.json());
 app.use(express.static("client"));
@@ -67,17 +68,49 @@ function onConnection(clientSocket) {
 
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
-    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket.id, data)); //dk yet what data needs to be
-
-    clientSocket.on("typing", (typeData) => onTyping(clientSocket.id, typeData));
+    /*clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket.id, data)); //dk yet what data needs to be
+    */
+    clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
 
     clientSocket.on("disconnect", () => onDisconnect(clientSocket.id));
 
 }
 
 function onRecieveDocumentUuid(clientSocket, client) {
+    clientSocket.join(client.documentUuid);
+    console.log(clientSocket.id + " connected to + " + client.documentUuid);
+    let clients;
+
+    io.of('/').in(client.documentUuid).clients(function(error,clientList){
+        clients = clientList;
+    });
+
+    let rooms = io.sockets.adapter.rooms;
+
+    /*for (let i = 0; i < rooms.length; i++) {
+        const room = rooms[i];
+        if(!clients.includes(room)) {
+            newRooms.push(room);
+        } else {
+            //.log(room);
+        }
+    }*/
+
+    /*rooms = rooms.filter(room => {
+        if(clients.includes(room)) {
+            return false;
+        } else {
+            return true;
+        }
+    });*/
+
+
+
+    //io.to(client.documentUuid).emit("typing", "hansi");
+
+
     //add clients to their respective document room
-    let newClient = {
+    /*let newClient = {
         "clientSocketId" : clientSocket.id,
         "clientUuid" : client.clientUuid
     };
@@ -110,13 +143,14 @@ function onRecieveDocumentUuid(clientSocket, client) {
         const document = new Document({documentUuid : client.documentUuid, content : "", owner : newClient.clientUuid});
         /*document.save((err) => {
             if (err) console.error(err);
-        });*/
+        });
 
         documents.push({"document" : document, "content" : "hansiinitalContent", "clients" : [newClient]});
     }
 
     //send document content to the newly joined user
     clientSocket.emit("initialDocumentContent", containsDocument.content);
+    */
 }
 
 function onDocumentSave(clientSocketId, data) {
@@ -131,13 +165,24 @@ function onDisconnect(clientSocketId) {
     //send to other users that current user disconnected from channel
 }
 
-function onTyping(clientSocketId, typeData) {
+function onTyping(clientSocket, typeData) {
     //io.emit("typing", typeData);
-    const clients = getAllClientsInSameDocument(clientSocketId);
+    //const clients = getAllClientsInSameDocument(clientSocketId);
+    let clients;
+
+    let room = "hansi";
+    io.to(room).emit('typing', typeData);
+
+
+    /*io.of('/').in(clientSocket.rooms[0]).clients(function(error,clientList){
+        clients = clientList;
+    });
 
     for (let i = 0; i < clients.length; i++) {
-        io.to(clients[i].clientSocketId).emit("typing", typeData);
-    }
+        io.to(clients[i].clientSocket.id).emit("typing", typeData);
+        console.log(clientSocket.id +  " typed " + typeData);
+    }*/
+
     /*clients.foreach(client => {
         io.broadcast.to(client.clientSocketId).emit('typing', typeDate);
     });*/
