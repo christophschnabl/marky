@@ -22,7 +22,6 @@ fluffy.save(function (err, fluffy) {
 });
 */
 
-
 // documents : [{"documentUUid" : [{"clientUuid", "clientSocketId"}]}]
 // clients = []
 
@@ -72,6 +71,12 @@ function onRecieveDocumentUuid(clientSocket, client) {
         if (document.documentUuid === client.documentUuid) {
             containsDocument = document;
         }
+    });
+
+    Document.find({"documentUuid" : client.documentUuid}, (err, document) => {
+        if (err) console.err(err);
+
+        console.log(document);
     });
 
     if (containsDocument) {

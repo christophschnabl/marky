@@ -15,10 +15,4 @@ const documentSchema = new mongoose.Schema({
 
 const Document = mongoose.model('Document', documentSchema);
 
-<<<<<<< HEAD
 module.exports = Document;
-=======
-module.exports = {
-  Document: Document
-}
->>>>>>> 9f8aaeae7ab2211c181fd709fc946386e5ebc75c

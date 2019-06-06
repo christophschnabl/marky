@@ -10,8 +10,8 @@ $(function () {
   let clientsCursorsPosition = [];
   const socket = io();
 
-  //socket.emit("sendName", uuidv4());
-  socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
+  //socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
+  socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": "flfuffy"});
 
   socket.on("initialDocumentContent", initialContent => {
       $('#editor').val(initialContent);
