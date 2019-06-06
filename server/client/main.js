@@ -11,7 +11,7 @@ $(function () {
   const socket = io();
 
   //socket.emit("sendName", uuidv4());
-  socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": "document1"});
+  socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
 
   $("#editor").on("input", function(e){
     e.preventDefault();
