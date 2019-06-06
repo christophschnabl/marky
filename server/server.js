@@ -6,14 +6,16 @@ const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
 
-// client: { document : clientId }
-let clients = [];
+// documents : [{"documentUUid" : [{"clientUuid", "clientSocketId"}]}]
+// clients = []
 
-app.use(bodyparser.json())
+let documents = [];
 
-app.use('/', routes);
+app.use(bodyparser.json());
+app.use(express.static("client"));
+app.use("/", routes);
 
-app.get("/document/uuid:", function(req, res) {
+app.get("/", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
 
@@ -23,10 +25,16 @@ app.get('/login', function(req, res) {
 
 //app.use(express.static(__dirname + "/public"));
 
+function getAllClientsForDocumemt(documentUuid) {
+    //return clients.filter(client => client )
+}
+
 function onConnection(clientSocket) {
-    if (!clients.includes(clientSocket.id)) {
-        clients.push(clientSocket.id);
-    }
+    /*if (!clients.includes(clientSocket.Uuid)) {
+        clients.push(clientSocket.Uuid);
+    }*/
+
+    clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
     clientSocket.on("typing", onTyping);
 
@@ -34,9 +42,39 @@ function onConnection(clientSocket) {
 
 }
 
-function onDisconnect(clientId) {
-    clients = clients.filter(client => client !== clientId);
-    console.log(clients);
+function onRecieveDocumentUuid(clientSocket, client) {
+    //add clients to their respective document room
+    let newClient = {
+        "clientSocketId" : clientSocket.id,
+        "clientUuid" : client.clientUuid
+    };
+
+    let containsDocument = false;
+
+    documents.forEach(document => { //refactor -> in db nachschauen und gleich inhalt vom dokument mitbekommen
+        if (document.documentUuid === client.documentUuid) {
+            containsDocument = document;
+        }
+    });
+
+    if (containsDocument) {
+        documents.forEach(document => {
+            if (document.documentUuid === client.documentUuid) {
+                document.clients.push(newClient);
+            }
+        });
+    } else {
+        //dokument in db erstellen!
+        documents.push({"documentUuid" : client.documentUuid, "content" : "hansiinitalContent", "clients" : [newClient]});
+    }
+
+    //send document content to the newly joined user
+    clientSocket.emit("initialDocumentContent", containsDocument.content);
+}
+
+function onDisconnect(clientSocketId) {
+    /*clients = clients.filter(client => client !== clientSocketId);
+    console.log(clients);*/
 }
 
 function onTyping(typeData) {
