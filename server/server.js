@@ -4,9 +4,14 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
+const bodyparser = require('body-parser');
 
 // client: { document : clientId }
 let clients = [];
+
+app.use(bodyparser.json())
+
+app.use('/', routes);
 
 app.get("/document/uuid:", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
