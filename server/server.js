@@ -62,9 +62,17 @@ function getRoomForClient(clientSocket) {
 }
 
 
-function getDocumentStatus(documentUuid) {
+/*function getDocumentStatus(documentUuid) {
     let containsDocument = false;
-//no ned fertig
+
+    if (!containsDocument) {
+        if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
+            containsDocument = true;
+        } else {
+            containsDocument = false;
+        }
+    }
+
     Document.find({"documentUuid" : documentUuid}, (err, document) => {
         if (err) console.error(err);
 
@@ -73,16 +81,8 @@ function getDocumentStatus(documentUuid) {
         }
     });
 
-    if (!containsDocument) {
-        if(Object.keys(roomsWithContents).includes(documentUuid)) {
-            containsDocument = true;
-        } else {
-            containsDocument = false;
-        }
-    }
-
     return containsDocument;
-}
+}*/
 
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
@@ -110,74 +110,6 @@ function onRecieveDocumentUuid(clientSocket, client) {
     if (!containsDocument) {
 
     }
-
-
-    //io.to(client.documentUUid).emit("typing", "hansi");
-
-    /*for (let i = 0; i < rooms.length; i++) {
-        const room = rooms[i];
-        if(!clients.includes(room)) {
-            newRooms.push(room);
-        } else {
-            //.log(room);
-        }
-    }*/
-
-    /*rooms = rooms.filter(room => {
-        if(clients.includes(room)) {
-            return false;
-        } else {
-            return true;
-        }
-    });*/
-
-
-
-    //io.to(client.documentUuid).emit("typing", "hansi");
-
-
-    //add clients to their respective document room
-    /*let newClient = {
-        "clientSocketId" : clientSocket.id,
-        "clientUuid" : client.clientUuid
-    };
-
-    let containsDocument = false;
-
-    documents.forEach(document => { //refactor -> in db nachschauen und gleich inhalt vom dokument mitbekommen
-        if (document.document.documentUuid === client.documentUuid) {
-            containsDocument = document;
-        }
-    });
-
-    if (!containsDocument) {
-        Document.find({"documentUuid" : client.documentUuid}, (err, document) => {
-            if (err) console.error(err);
-
-            if (document.length > 0) {
-                containsDocument = true;
-            }
-        });
-    }
-
-    if (containsDocument) {
-        documents.forEach(document => {
-            if (document.document.documentUuid === client.documentUuid) {
-                document.clients.push(newClient);
-            }
-        });
-    } else { //create new Document and save it to db
-        const document = new Document({documentUuid : client.documentUuid, content : "", owner : newClient.clientUuid});
-        /*document.save((err) => {
-            if (err) console.error(err);
-        });
-
-        documents.push({"document" : document, "content" : "hansiinitalContent", "clients" : [newClient]});
-    }
-
-    //send document content to the newly joined user
-    clientSocket.emit("initialDocumentContent", containsDocument.content);
-    */
 }
 
 function onDocumentSave(clientSocket, data) {
