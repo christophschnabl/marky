@@ -99,17 +99,18 @@ function onRecieveDocumentUuid(clientSocket, client) {
 
     clientSocket.join(client.documentUuid);
 
-    console.log(clientSocket.id + " connected to + " + client.documentUuid);
+    console.log(clientSocket.id + " joined + " + client.documentUuid);
 
     const clientsInRoom = getAllClientsForRoom(client.documentUuid);
 
-    let rooms = io.sockets.adapter.rooms;
+    //TODO get inital text either from session or mongo
+    io.to(client.documentUuid).emit("typing", {"text" : "hansiistwinscoolerhansi"})
 
-    const containsDocument = getDocumentStatus(client.documentUuid);
+    /*const containsDocument = getDocumentStatus(client.documentUuid);
 
     if (!containsDocument) {
 
-    }
+    }*/
 }
 
 function onDocumentSave(clientSocket, data) {
