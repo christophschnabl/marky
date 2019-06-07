@@ -26,9 +26,10 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + "/client/login.html");
 });
 
+let roomsWithContents = [];
 
 function getAllClientsForRoom(documentUuid) {
-    io.of('/').in(client.documentUuid).clients(function(error,clients) {
+    io.of('/').in(documentUuid).clients(function(error,clients) {
         if (error) console.error("Room doesn't exist: " + error);
 
         return clients;
@@ -60,6 +61,29 @@ function getRoomForClient(clientSocket) {
     return rooms[0];
 }
 
+
+function getDocumentStatus(documentUuid) {
+    let containsDocument = false;
+//no ned fertig
+    Document.find({"documentUuid" : documentUuid}, (err, document) => {
+        if (err) console.error(err);
+
+        if (document.length > 0) {
+            containsDocument = true;
+        }
+    });
+
+    if (!containsDocument) {
+        if(Object.keys(roomsWithContents).includes(documentUuid)) {
+            containsDocument = true;
+        } else {
+            containsDocument = false;
+        }
+    }
+
+    return containsDocument;
+}
+
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
@@ -80,6 +104,12 @@ function onRecieveDocumentUuid(clientSocket, client) {
     const clientsInRoom = getAllClientsForRoom(client.documentUuid);
 
     let rooms = io.sockets.adapter.rooms;
+
+    const containsDocument = getDocumentStatus(client.documentUuid);
+
+    if (!containsDocument) {
+
+    }
 
 
     //io.to(client.documentUUid).emit("typing", "hansi");
@@ -163,6 +193,7 @@ function onDisconnect(clientSocket) {
 
 function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
+
     io.to(room).emit('typing', typeData);
 }
 
