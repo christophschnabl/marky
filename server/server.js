@@ -8,16 +8,11 @@ const bodyparser = require('body-parser');
 const mongoose = require("mongoose");
 const Document = require("./models/document.js");
 
+//todo auslagern
 mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/marky?retryWrites=true&w=majority",  { useNewUrlParser: true } )
     .then(() =>  console.log("connection successful"))
     .catch((err) => console.error(err))
 ;
-
-// documents : [{"document" : [{"clientUuid", "clientSocketId"}]}]
-// clients = []
-
-let documents = [];
-let users = [];
 
 app.use(bodyparser.json());
 app.use(express.static("client"));
@@ -31,67 +26,52 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + "/client/login.html");
 });
 
-//app.use(express.static(__dirname + "/public"));
-
-function getAllClientsForDocumemt(documentUuid) {
-    //return clients.filter(client => client )
-}
-
-function getAllClientsInSameDocument(clientSocketId) {
-    for (let i = 0; i < documents.length; i++) {
-        for (let j = 0; j < documents[i].clients.length; j++) {
-            const client =  documents[i].clients[j];
-
-            if (client.clientSocketId === clientSocketId) {
-                return documents[i].clients;
-            }
-        }
-    }
-}
-
-function getDocumentByClientSocketId(clientSocketId) {
-    for (let i = 0; i < documents.length; i++) {
-        for (let j = 0; j < documents[i].clients.length; j++) {
-            const client =  documents[i].clients[j];
-
-            if (client.clientSocketId === clientSocketId) {
-                return documents[i].document;
-            }
-        }
-    }
-}
 
 function getAllClientsForRoom(documentUuid) {
     io.of('/').in(client.documentUuid).clients(function(error,clients) {
-        if (error) console.error("Room doesn't exist: " error);
+        if (error) console.error("Room doesn't exist: " + error);
 
         return clients;
     });
 }
 
-function onConnection(clientSocket) {
-    /*if (!clients.includes(clientSocket.Uuid)) {
-        clients.push(clientSocket.Uuid);
-    }*/
 
-    clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
-
-    /*clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket.id, data)); //dk yet what data needs to be
-    */
-    clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
-
-    clientSocket.on("disconnect", () => onDisconnect(clientSocket.id));
-
-}
-
-function onRecieveDocumentUuid(clientSocket, client) {
-    console.log(clientSocket.rooms);
-    Object.keys(clientSocket.rooms).filter(room => {
+function leaveAllButOwnRooms(clientSocket) {
+    Object.keys(clientSocket.rooms).filter(room => { //foreach doesn't work here -__-
         if (room !== clientSocket.id) {
             clientSocket.leave(room);
+            return false;
+        } else {
             return true;
         }
     });
+}
+
+
+function getRoomForClient(clientSocket) {
+    const rooms = Object.keys(clientSocket.rooms).filter(room => {
+        if (room === clientSocket.id) {
+            return false;
+        } {
+            return true;
+        }
+    });
+
+    return rooms[0];
+}
+
+function onConnection(clientSocket) {
+    clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
+
+    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data)); //dk yet what data needs to be
+
+    clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
+
+    clientSocket.on("disconnect", () => onDisconnect(clientSocket));
+}
+
+function onRecieveDocumentUuid(clientSocket, client) {
+    leaveAllButOwnRooms(clientSocket);
 
     clientSocket.join(client.documentUuid);
 
@@ -170,59 +150,20 @@ function onRecieveDocumentUuid(clientSocket, client) {
     */
 }
 
-function onDocumentSave(clientSocketId, data) {
-    const document = getDocumentByClientSocketId(clientSocketId);
+function onDocumentSave(clientSocket, data) {
+    const document = getDocumentByClientSocketId(clientSocket.id);
     console.log(document);
 }
 
-function onDisconnect(clientSocketId) {
-    /*clients = clients.filter(client => client !== clientSocketId);
-    console.log(clients);*/
-
-    //send to other users that current user disconnected from channel
+function onDisconnect(clientSocket) {
+    const room = getRoomForClient(clientSocket);
+    //io.to(room).emit("clientLeft", enterNameHere);
+    clientSocket.leave();
 }
 
 function onTyping(clientSocket, typeData) {
-    //io.emit("typing", typeData);
-    //const clients = getAllClientsInSameDocument(clientSocketId);
-    let clients;
-
-
-    console.log(clientSocket.rooms);
-
-    let rooms = Object.keys(clientSocket.rooms).filter(room => {
-        if (room === clientSocket.id) {
-            return false;
-        } {
-            return true;
-        }
-    });
-
-    console.log(rooms);
-
-    let room = rooms[0];
-
-    console.log(room);
-
+    const room = getRoomForClient(clientSocket);
     io.to(room).emit('typing', typeData);
-
-
-    /*io.of('/').in(clientSocket.rooms[0]).clients(function(error,clientList){
-        clients = clientList;
-    });
-
-    for (let i = 0; i < clients.length; i++) {
-        io.to(clients[i].clientSocket.id).emit("typing", typeData);
-        console.log(clientSocket.id +  " typed " + typeData);
-    }*/
-
-    /*clients.foreach(client => {
-        io.broadcast.to(client.clientSocketId).emit('typing', typeDate);
-    });*/
-}
-
-function onSendName(clientUuid) {
-    clients.push(clientUuid);
 }
 
 io.on("connection", onConnection);
