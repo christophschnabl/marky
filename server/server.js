@@ -61,6 +61,14 @@ function getDocumentByClientSocketId(clientSocketId) {
     }
 }
 
+function getAllClientsForRoom(documentUuid) {
+    io.of('/').in(client.documentUuid).clients(function(error,clients) {
+        if (error) console.error("Room doesn't exist: " error);
+
+        return clients;
+    });
+}
+
 function onConnection(clientSocket) {
     /*if (!clients.includes(clientSocket.Uuid)) {
         clients.push(clientSocket.Uuid);
@@ -86,14 +94,15 @@ function onRecieveDocumentUuid(clientSocket, client) {
     });
 
     clientSocket.join(client.documentUuid);
-    console.log(clientSocket.id + " connected to + " + client.documentUuid);
-    let clients;
 
-    io.of('/').in(client.documentUuid).clients(function(error,clientList){
-        clients = clientList;
-    });
+    console.log(clientSocket.id + " connected to + " + client.documentUuid);
+
+    const clientsInRoom = getAllClientsForRoom(client.documentUuid);
 
     let rooms = io.sockets.adapter.rooms;
+
+
+    //io.to(client.documentUUid).emit("typing", "hansi");
 
     /*for (let i = 0; i < rooms.length; i++) {
         const room = rooms[i];
