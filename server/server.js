@@ -27,6 +27,7 @@ app.get('/login', function(req, res) {
 });
 
 let roomsWithContents = [];
+let clientSocketIdWithClientUuids = [];
 
 function getAllClientsForRoom(documentUuid) {
     io.of('/').in(documentUuid).clients(function(error,clients) {
@@ -34,6 +35,28 @@ function getAllClientsForRoom(documentUuid) {
 
         return clients;
     });
+}
+
+function getContentForDocument(documentUuid, callback) {
+    if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
+        documentContent = roomsWithContents.documentUuid;
+    } else { //fidn in db and save locally
+        Document.findOne({"documentUuid" : documentUuid}, (err, document) => {
+            if (err) console.error(err);
+
+            if (document !== undefined && document !== null) {
+                 callback(document.content);
+            } else {
+                console.log("not in mongo");
+            }
+        });
+    }
+
+    callback("");
+}
+
+function addToRoomsWithContents(documentUuid, content) {
+
 }
 
 
@@ -62,27 +85,19 @@ function getRoomForClient(clientSocket) {
 }
 
 
-/*function getDocumentStatus(documentUuid) {
-    let containsDocument = false;
+function addToClientList(clientSocketId, clientUuid) {
+    clientSocketIdWithClientUuids.push({"clientSocketId" : clientSocketId, "clientUuid" : clientUuid});
+}
 
-    if (!containsDocument) {
-        if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
-            containsDocument = true;
+function removeFromClientList(clientSocketId) {
+    clientSocketIdWithClientUuids = clientSocketIdWithClientUuids.filter(client => {
+        if (client.clientSocketIt === clientSocketId) {
+            return false;
         } else {
-            containsDocument = false;
-        }
-    }
-
-    Document.find({"documentUuid" : documentUuid}, (err, document) => {
-        if (err) console.error(err);
-
-        if (document.length > 0) {
-            containsDocument = true;
+            return true;
         }
     });
-
-    return containsDocument;
-}*/
+}
 
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
@@ -96,32 +111,30 @@ function onConnection(clientSocket) {
 
 function onRecieveDocumentUuid(clientSocket, client) {
     leaveAllButOwnRooms(clientSocket);
+    addToClientList(clientSocket.id, client.clientUuid);
 
+    // join room for requested document
     clientSocket.join(client.documentUuid);
-
     console.log(clientSocket.id + " joined + " + client.documentUuid);
 
-    const clientsInRoom = getAllClientsForRoom(client.documentUuid);
-
-    //TODO get inital text either from session or mongo
-    io.to(client.documentUuid).emit("typing", {"text" : "hansiistwinscoolerhansi"})
-
-    /*const containsDocument = getDocumentStatus(client.documentUuid);
-
-    if (!containsDocument) {
-
-    }*/
+    // get inital text for document and send it to the joining client
+    getContentForDocument(client.documentUuid, (content) => {
+            io.to(client.documentUuid).emit("typing", {"text" : content});
+    });
 }
 
 function onDocumentSave(clientSocket, data) {
     const document = getDocumentByClientSocketId(clientSocket.id);
     console.log(document);
+    //save oder update?
 }
 
 function onDisconnect(clientSocket) {
     const room = getRoomForClient(clientSocket);
-    //io.to(room).emit("clientLeft", enterNameHere);
+    //io.to(room).emit("clientLeft", enterNameHere); let othr clients know that client left the document
+
     clientSocket.leave();
+    removeFromClientList(clientSocket.id);
 }
 
 function onTyping(clientSocket, typeData) {

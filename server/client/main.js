@@ -11,26 +11,11 @@ $(function () {
 
   $("#connect").on("click", function(e) {
         socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
-            //socket.emit("saveDocument");
-    });
-  /*let clientsCursorsPosition = [];
-  const socket = io();
-
-  //socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
-
-
-  socket.on("initialDocumentContent", initialContent => {
-      $('#editor').val(initialContent);
   });
 
-  $("#connect").on("click", function(e) {
-      socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
-          //socket.emit("saveDocument");
-  });
-
-*/
   $("#editor").on("input", function(e) {
     e.preventDefault();
+
 
     //cursor position code from
     //https://stackoverflow.com/a/7745958/6267827
