@@ -32,6 +32,12 @@ $(function () {
     return false;
   });
 
+  /*socket.on("clientLeft", function(data) {
+      data.foreach(user => {
+          $("#userList").append("<li>" + user "</li>")
+      })
+  });*/
+
 
   socket.on('typing', function(data){
       $('#editor').val(data.text);

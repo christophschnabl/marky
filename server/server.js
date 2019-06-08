@@ -29,6 +29,7 @@ app.get('/login', function(req, res) {
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 
+
 function getAllClientsForRoom(documentUuid) {
     io.of('/').in(documentUuid).clients(function(error,clients) {
         if (error) console.error("Room doesn't exist: " + error);
@@ -37,38 +38,27 @@ function getAllClientsForRoom(documentUuid) {
     });
 }
 
-function getContentFromLocalDocument(documentUuid, callback) {
-
-}
 
 function getContentForDocument(documentUuid, callback) {
     console.log(roomsWithContents);
     if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
-
         setTimeout(() => {callback(roomsWithContents[documentUuid])}, 0);
-    } else { //fidn in db and save locally
+    } else { //find in db and save locally
         Document.findOne({"documentUuid" : documentUuid}, (err, document) => {
             if (err) console.error(err);
 
             if (document !== undefined && document !== null) {
-
                 roomsWithContents[documentUuid] = document.content;
-                console.log(roomsWithContents);
                 callback(document.content);
-            } else {
-
+            } else { //document is empty
+                //createDocument
+                roomsWithContents[documentUuid] = "";
+                //save to db? or wait for user to safe document?
+                callback("");
             }
         });
     }
-
-    callback("");
 }
-
-function addToRoomsWithContents(documentUuid, content) {
-
-
-}
-
 
 function leaveAllButOwnRooms(clientSocket) {
     Object.keys(clientSocket.rooms).filter(room => { //foreach doesn't work here -__-
