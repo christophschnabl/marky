@@ -26,7 +26,7 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + "/client/login.html");
 });
 
-let roomsWithContents = [];
+let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 
 function getAllClientsForRoom(documentUuid) {
@@ -37,17 +37,26 @@ function getAllClientsForRoom(documentUuid) {
     });
 }
 
+function getContentFromLocalDocument(documentUuid, callback) {
+
+}
+
 function getContentForDocument(documentUuid, callback) {
+    console.log(roomsWithContents);
     if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
-        documentContent = roomsWithContents.documentUuid;
+
+        setTimeout(() => {callback(roomsWithContents[documentUuid])}, 0);
     } else { //fidn in db and save locally
         Document.findOne({"documentUuid" : documentUuid}, (err, document) => {
             if (err) console.error(err);
 
             if (document !== undefined && document !== null) {
-                 callback(document.content);
+
+                roomsWithContents[documentUuid] = document.content;
+                console.log(roomsWithContents);
+                callback(document.content);
             } else {
-                console.log("not in mongo");
+
             }
         });
     }
@@ -56,6 +65,7 @@ function getContentForDocument(documentUuid, callback) {
 }
 
 function addToRoomsWithContents(documentUuid, content) {
+
 
 }
 
@@ -119,7 +129,7 @@ function onRecieveDocumentUuid(clientSocket, client) {
 
     // get inital text for document and send it to the joining client
     getContentForDocument(client.documentUuid, (content) => {
-            io.to(client.documentUuid).emit("typing", {"text" : content});
+        io.to(client.documentUuid).emit("typing", {"text" : content});
     });
 }
 
@@ -139,6 +149,10 @@ function onDisconnect(clientSocket) {
 
 function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
+
+    roomsWithContents[room] = typeData.text;
+    console.log(roomsWithContents);
+
 
     io.to(room).emit('typing', typeData);
 }
