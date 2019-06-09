@@ -1,6 +1,13 @@
 <template>
     <div>
         {{link}}
+        <div>
+        <ul id="#userList">
+
+        </ul>
+
+        <textarea id="editor" cols="40" rows="5" ref="text" :value="value" @input="textChange($event.target.value)"></textarea>
+        </div>
     </div>
 </template>
 
@@ -9,7 +16,8 @@
         name: "Document",
         data: () => {
             return {
-                link: "empty-link"
+                link: "empty-link",
+                value: ""
             }
         },
         created: function(){
@@ -17,17 +25,27 @@
         },
         sockets: {
             connect: function () {
+                this.$socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": this.link});
                 console.log('socket connected')
             },
-            customEmit: function (data) {
-                console.log(data)
-                console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+            typing: function (data) {
+                this.value = data.text;
             }
         },
         methods: {
-            clickButton: function (data) {
-                // $socket is socket.io-client instance
-                this.$socket.emit('emit_method', data)
+            textChange: function(text){
+                const cursorPosition = this.$refs.text.selectionStart;
+                console.log(cursorPosition);
+
+                const data = {
+                    "text" : text,
+                    "ClientsCursorPosition" : 0
+                };
+
+
+                this.$socket.emit("typing", data);
+
+                return false;
             }
         }
     }
