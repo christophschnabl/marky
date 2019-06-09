@@ -28,7 +28,7 @@ app.get('/login', function(req, res) {
 
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
-
+let clientSocketIdWithRooms = {}; //save clients with respective rooms bc of socket io
 
 function getAllClientsForRoom(documentUuid) {
     io.of('/').in(documentUuid).clients(function(error,clients) {
@@ -38,9 +38,15 @@ function getAllClientsForRoom(documentUuid) {
     });
 }
 
+function getRoomForClientAfterDisconnection(clientSocketId) {
+    return clientSocketIdWithRooms[clientSocketId];
+}
+
+function addClientToRoomForDisconnection(clientSocketId, room) {
+    clientSocketIdWithRooms[clientSocketId] = room;
+}
 
 function getContentForDocument(documentUuid, callback) {
-    console.log(roomsWithContents);
     if(Object.keys(roomsWithContents).includes(documentUuid)) { //documet room already locally saved
         setTimeout(() => {callback(roomsWithContents[documentUuid])}, 0);
     } else { //find in db and save locally
@@ -60,7 +66,7 @@ function getContentForDocument(documentUuid, callback) {
     }
 }
 
-function leaveAllButOwnRooms(clientSocket) {
+function leaveAllButOwnRoom(clientSocket) {
     Object.keys(clientSocket.rooms).filter(room => { //foreach doesn't work here -__-
         if (room !== clientSocket.id) {
             clientSocket.leave(room);
@@ -85,13 +91,24 @@ function getRoomForClient(clientSocket) {
 }
 
 
+function getNameBySocketId(clientSocketId) {
+    console.log(clientSocketIdWithClientUuids);
+
+    clientSocketIdWithClientUuids = clientSocketIdWithClientUuids.filter(client => {
+        if (client.clientSocketId === clientSocketId) {
+            return client.clientUuid;
+        }
+    });
+}
+
+
 function addToClientList(clientSocketId, clientUuid) {
     clientSocketIdWithClientUuids.push({"clientSocketId" : clientSocketId, "clientUuid" : clientUuid});
 }
 
 function removeFromClientList(clientSocketId) {
     clientSocketIdWithClientUuids = clientSocketIdWithClientUuids.filter(client => {
-        if (client.clientSocketIt === clientSocketId) {
+        if (client.clientSocketId === clientSocketId) {
             return false;
         } else {
             return true;
@@ -110,17 +127,21 @@ function onConnection(clientSocket) {
 }
 
 function onRecieveDocumentUuid(clientSocket, client) {
-    leaveAllButOwnRooms(clientSocket);
+    leaveAllButOwnRoom(clientSocket);
     addToClientList(clientSocket.id, client.clientUuid);
+    addClientToRoomForDisconnection(clientSocket.id, client.documentUuid);
 
     // join room for requested document
     clientSocket.join(client.documentUuid);
-    console.log(clientSocket.id + " joined + " + client.documentUuid);
 
     // get inital text for document and send it to the joining client
     getContentForDocument(client.documentUuid, (content) => {
         io.to(client.documentUuid).emit("typing", {"text" : content});
     });
+
+    //let other users know that this client Joined
+    console.log("Client: " + client.clientUuid + " joined channel: " + client.documentUuid);
+    clientSocket.broadcast.to(client.documentUuid).emit("clientJoined", client.clientUuid);
 }
 
 function onDocumentSave(clientSocket, data) {
@@ -129,10 +150,14 @@ function onDocumentSave(clientSocket, data) {
     //save oder update?
 }
 
-function onDisconnect(clientSocket) {
-    const room = getRoomForClient(clientSocket);
-    //io.to(room).emit("clientLeft", enterNameHere); let othr clients know that client left the document
+function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
+    //let othr clients know that client left the document
+    const room = getRoomForClientAfterDisconnection(clientSocket.id);
+    console.log(clientSocket.id);
+    console.log("Client: " + getNameBySocketId(clientSocket.id) + " left channel: " + room);
+    io.to(room).emit("clientLeft", getNameBySocketId(clientSocket.id));
 
+    //leave from room
     clientSocket.leave();
     removeFromClientList(clientSocket.id);
 }
@@ -141,7 +166,7 @@ function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
 
     roomsWithContents[room] = typeData.text;
-    console.log(roomsWithContents);
+    //console.log(roomsWithContents);
 
 
     io.to(room).emit('typing', typeData);

@@ -9,14 +9,17 @@
   <meta name="google-signin-client_id" content="68344612595-crugu9msipjpktm57iisoo4rds5qjphv.apps.googleusercontent.com">
 </head>
 <body>
-
-  <ul id="#userList">
-
-  </ul>
+      <button id="save">Save Document</button>
   <button id="connect">Connect </button>
+  <input id="clientUuid" type="text" placeholder="userUuid"></input>
   <input id="documentUuid" type="text" placeholder="documentUuid"></input>
 
   <textarea id="editor" cols="40" rows="5"></textarea>
+
+  <p>Userlog</p>
+  <ul id="userList">
+
+  </ul>
 
   <script src="/socket.io/socket.io.js"></script>
 
