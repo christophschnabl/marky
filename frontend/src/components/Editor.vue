@@ -20,54 +20,18 @@
                     </div>
                 </div>
             </div>
-            <div class="uk-width-1-1">
-                <div class="uk-flex uk-width-1-1 toolbar">
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:print;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Print; pos: bottom" v-on:click="print"></button>
-                    </div>
-                    <hr class = "divider">
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:bold;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Bold; pos: bottom" v-on:click="insertBold"></button>
-                    </div>
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:italic;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Italic; pos: bottom" v-on:click="insertItalic"></button>
-                    </div>
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:strikethrough;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Strikethrough; pos: bottom"
-                                v-on:click="insertStrikethrough"></button>
-                    </div>
-                    <hr class="divider">
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:list;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: List; pos: bottom" v-on:click="insertList"></button>
-                    </div>
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:table;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Table; pos: bottom" v-on:click="insertTable"></button>
-                    </div>
-                    <hr class="divider">
-                    <div class="toolbar-element uk-flex">
-                        <button uk-icon="icon:code;ratio:1.1"
-                                class="uk-margin-auto uk-margin-auto-vertical"
-                                uk-tooltip="title: Code; pos: bottom" v-on:click="insertCode"></button>
-                    </div>
-                </div>
+            <Toolbar @print="print"
+                     @bold="insertBold"
+                     @italic="insertItalic"
+                     @strike="insertStrikethrough"
+                     @list="insertList"
+                     @table="insertTable"
+                     @code="insertCode"></Toolbar>
             </div>
-        </div>
         <div class="editor-wrapper uk-height-1-1">
             <div class="uk-height-1-1 uk-flex">
                 <textarea id="editor" ref="text" :value="value" @input="textChange($event.target.value)"></textarea>
-                <div class="markdown" v-html="markdown" id = "print"></div>
+                <Markdown :value="markdown" id = "print"></Markdown>
             </div>
         </div>
     </div>
@@ -75,10 +39,16 @@
 
 <script>
     import axios from 'axios';
+    import Markdown from './Markdown'
+    import Toolbar from './Toolbar'
 
     export default {
         name: "Editor",
         props: {},
+        components: {
+            Markdown,
+            Toolbar
+        },
         data: () => {
             return {
                 value: "",
@@ -151,7 +121,6 @@
                 //TODO: Move cursor
             },
             print() {
-                // Pass the element id here
                 this.$htmlToPaper('print', () => {
                     console.log('Printing done or got cancelled!');
                 });
@@ -220,10 +189,6 @@
         padding: 16px;
     }
 
-    .markdown {
-        position: relative;
-    }
-
     .bar, .toolbar{
         padding-left: 16px;
     }
@@ -241,34 +206,8 @@
         background: white;
     }
 
-    .toolbar-element {
-        height: 42px;
-        width: 42px;
-    }
-
-    .toolbar-element > button:hover, .bar-element > button:hover {
-        background: #f6f6f6;
-    }
-
-    .toolbar-element > button {
-        color: black;
-        outline: none;
-        padding: 4px;
-    }
-
     .bar {
         height: 32px;
-    }
-
-    .bar-element {
-
-    }
-
-    .divider {
-        height: 24px;
-        margin: 9px 0;
-        width: 1px;
-        background: lightgrey;
     }
 
     .bar-element > button {
