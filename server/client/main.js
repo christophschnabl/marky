@@ -10,7 +10,7 @@ $(function () {
   const socket = io();
 
   $("#connect").on("click", function(e) {
-        socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
+        socket.emit("recieveDocumentUuid",  {"clientUuid" : $('#clientUuid').val(), "documentUuid": $('#documentUuid').val()});
   });
 
   $("#editor").on("input", function(e) {
@@ -38,6 +38,14 @@ $(function () {
       })
   });*/
 
+  socket.on("clientLeft", function(client) {
+      console.log("Client left channel: " + client);
+      $("#userList").append("<li>User: " + client + " left</li>");
+  });
+
+  socket.on("clientJoined", function(client) {
+     $("#userList").append("<li>User: " + client + " joined</li>");
+  });
 
   socket.on('typing', function(data){
       $('#editor').val(data.text);
