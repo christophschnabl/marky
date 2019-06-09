@@ -1,56 +1,39 @@
 <template>
-    <div>
+    <div class = "document">
         {{link}}
-        <div>
-        <ul id="#userList">
-
-        </ul>
-
-        <textarea id="editor" cols="40" rows="5" ref="text" :value="value" @input="textChange($event.target.value)"></textarea>
+        <div class = "editor-wrapper">
+            <Editor></Editor>
         </div>
     </div>
 </template>
 
 <script>
+    import Editor from '../components/Editor';
+
     export default {
         name: "Document",
+        components: {
+            Editor
+        },
         data: () => {
             return {
                 link: "empty-link",
-                value: ""
             }
         },
-        created: function(){
+        created: function () {
             this.link = this.$route.params.id;
         },
         sockets: {
             connect: function () {
-                this.$socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": this.link});
+                this.$socket.emit("recieveDocumentUuid", {"clientUuid": "hansi", "documentUuid": this.link});
                 console.log('socket connected')
-            },
-            typing: function (data) {
-                this.value = data.text;
-            }
-        },
-        methods: {
-            textChange: function(text){
-                const cursorPosition = this.$refs.text.selectionStart;
-                console.log(cursorPosition);
-
-                const data = {
-                    "text" : text,
-                    "ClientsCursorPosition" : 0
-                };
-
-
-                this.$socket.emit("typing", data);
-
-                return false;
             }
         }
     }
 </script>
 
 <style scoped>
-
+.editor-wrapper{
+    height: 100vh;
+}
 </style>

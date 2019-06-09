@@ -12,7 +12,7 @@ Vue.use(new VueSocketIO({
         actionPrefix: 'SOCKET_',
         mutationPrefix: 'SOCKET_'
     }
-}))
+}));
 
 new Vue({
   router,
