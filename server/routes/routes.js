@@ -10,7 +10,7 @@ const BADREQUEST = {
   Message: '400 - Bad Request'
 };
 
-router.get('/render', function(req, res) {
+router.post('/render', function(req, res) {
   if(req.body.text != undefined){
       res.send(Render(req.body.text));
   }else{

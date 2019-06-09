@@ -6,18 +6,20 @@ const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
 const mongoose = require("mongoose");
+const cors = require('cors');
 const Document = require("./models/document.js");
+app.use(cors());
+app.options('*', cors());
+
 
 //todo auslagern
 mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/marky?retryWrites=true&w=majority",  { useNewUrlParser: true } )
     .then(() =>  console.log("connection successful"))
     .catch((err) => console.error(err))
 ;
-
 app.use(bodyparser.json());
 app.use(express.static("client"));
 app.use("/", routes);
-
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/client/index.html");
 });
