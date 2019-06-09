@@ -1,9 +1,6 @@
 <template>
     <div class = "document">
-        {{link}}
-        <div class = "editor-wrapper">
-            <Editor></Editor>
-        </div>
+        <Editor></Editor>
     </div>
 </template>
 
@@ -33,7 +30,7 @@
 </script>
 
 <style scoped>
-.editor-wrapper{
-    height: 100vh;
-}
+    .document{
+        height: 100vh;
+    }
 </style>
