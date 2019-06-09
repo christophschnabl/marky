@@ -1,5 +1,5 @@
 <template>
-    <div class="uk-width-1-1 uk-flex">
+    <div class="uk-width-1-1 uk-flex toolbar">
         <ToolbarElement icon="print" @pressed="print"></ToolbarElement>
         <hr class="divider">
         <ToolbarElement icon="bold" @pressed="bold"></ToolbarElement>
@@ -51,5 +51,12 @@
         margin: 9px 0;
         width: 1px;
         background: lightgrey;
+    }
+
+    .toolbar {
+        height: 42px;
+        border-bottom: 1px solid lightgrey;
+        border-top: 1px solid lightgrey;
+        background: white;
     }
 </style>
