@@ -29,11 +29,10 @@
         methods: {
             textChange: function(text){
                 const cursorPosition = this.$refs.text.selectionStart;
-                console.log(cursorPosition);
 
                 const data = {
                     "text" : text,
-                    "ClientsCursorPosition" : 0
+                    "ClientsCursorPosition" : cursorPosition
                 };
 
 
