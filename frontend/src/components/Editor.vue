@@ -2,7 +2,9 @@
     <div class="editor">
         <div class="top">
             <div class="uk-flex wrapper">
-                    <span uk-icon="icon:file-text;ratio: 2;" id="file" class = "uk-margin-auto-vertical"></span>
+                <div class = "logo uk-flex">
+                    <span class = "uk-margin-auto-vertical uk-margin-auto">✏️</span>
+                </div>
                 <div class="uk-height-1-1">
                     <input id = "documentname" :value="documentname">
                     <div class="uk-width-1-1 bar uk-flex">
@@ -20,6 +22,12 @@
             </div>
             <div class="uk-width-1-1">
                 <div class="uk-flex uk-width-1-1 toolbar">
+                    <div class="toolbar-element uk-flex">
+                        <button uk-icon="icon:print;ratio:1.1"
+                                class="uk-margin-auto uk-margin-auto-vertical"
+                                uk-tooltip="title: Print; pos: bottom" v-on:click="print"></button>
+                    </div>
+                    <hr class = "divider">
                     <div class="toolbar-element uk-flex">
                         <button uk-icon="icon:bold;ratio:1.1"
                                 class="uk-margin-auto uk-margin-auto-vertical"
@@ -59,7 +67,7 @@
         <div class="editor-wrapper uk-height-1-1">
             <div class="uk-height-1-1 uk-flex">
                 <textarea id="editor" ref="text" :value="value" @input="textChange($event.target.value)"></textarea>
-                <div class="markdown" v-html="markdown"></div>
+                <div class="markdown" v-html="markdown" id = "print"></div>
             </div>
         </div>
     </div>
@@ -141,6 +149,12 @@
                 this.value = this.value.substring(0, startPos) + text + this.value.substring(endPos, this.value.length);
 
                 //TODO: Move cursor
+            },
+            print() {
+                // Pass the element id here
+                this.$htmlToPaper('print', () => {
+                    console.log('Printing done or got cancelled!');
+                });
             }
         }
     }
@@ -149,18 +163,6 @@
 <style scoped>
     .wrapper{
         padding: 8px 0;
-    }
-
-    #file {
-        margin-left: 8px;
-    }
-
-    #documentname:hover{
-        border: 1px solid lightgrey;
-    }
-
-    #documentname:focus{
-        border: 1px solid deepskyblue;
     }
 
     #documentname{
@@ -172,8 +174,21 @@
         border: 1px solid transparent;
     }
 
+    #documentname:hover{
+        border: 1px solid lightgrey;
+    }
+
+    #documentname:focus{
+        border: 1px solid deepskyblue;
+    }
+
     .editor {
         height: 100%;
+    }
+
+    .logo{
+        width: 64px;
+        margin: 0 0 0 8px;
     }
 
     #editor {
@@ -181,10 +196,6 @@
         height: 100%;
         font-family: 'Helvetica Neue', Arial, sans-serif;
         color: #333;
-    }
-
-    .editor-wrapper {
-        margin-top: 128px;
     }
 
     textarea, .markdown {
@@ -218,8 +229,6 @@
     }
 
     .top{
-        position: fixed;
-        top: 0;
         background: white;
         width: 100%;
         box-shadow: 0 2px 16px 0px rgba(0,0,0,0.05);
