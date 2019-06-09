@@ -38,7 +38,7 @@
 
                 this.$socket.emit("typing", data);
 
-                return false;
+                this.renderMarkdown();
             },
             renderMarkdown: function(){
                 const obj = {
@@ -66,7 +66,7 @@
         color: #333;
     }
 
-    textarea, #editor div {
+    textarea, .markdown {
         display: inline-block;
         width: 49%;
         height: 100%;
@@ -89,7 +89,7 @@
         padding: 16px;
     }
 
-    code {
-        color: #f66;
+    .markdown{
+        position: relative;
     }
 </style>
