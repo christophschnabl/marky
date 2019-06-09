@@ -8,7 +8,7 @@
           <p class = "uk-margin-auto uk-margin-top big">MARKY</p>
           <p class = "small">Collaborative Markdown Editing</p>
           <div class = "uk-margin-auto uk-flex uk-margin-top">
-              <router-link to="/" class = "uk-margin-auto"><button class = "uk-button-primary uk-button uk-text-bold">Create document</button></router-link>
+              <button class = "uk-button-primary uk-button uk-text-bold uk-margin-auto" v-on:click="createDocument">Create document</button>
           </div>
       </div>
     </div>
@@ -16,8 +16,17 @@
 </template>
 
 <script>
+    import { uuid } from 'vue-uuid';
+
     export default {
-        name: "Home"
+        name: "Home",
+        methods: {
+            createDocument: function() {
+                const id = uuid.v4();
+                console.log(id);
+                this.$router.push(`/documents/${id}`);
+            }
+        }
     }
 </script>
 
