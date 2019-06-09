@@ -7,24 +7,15 @@ function uuidv4() {
 }
 
 $(function () {
-  let clientsCursorsPosition = [];
   const socket = io();
 
-  //socket.emit("recieveDocumentUuid", {"clientUuid" : "hansi", "documentUuid": window.location.pathname});
-
-
-  socket.on("initialDocumentContent", initialContent => {
-      $('#editor').val(initialContent);
-  });
-
   $("#connect").on("click", function(e) {
-      socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
-          //socket.emit("saveDocument");
+        socket.emit("recieveDocumentUuid",  {"clientUuid" : "hansi", "documentUuid": $('#documentUuid').val()});
   });
-
 
   $("#editor").on("input", function(e) {
     e.preventDefault();
+
 
     //cursor position code from
     //https://stackoverflow.com/a/7745958/6267827
@@ -32,7 +23,7 @@ $(function () {
 
     const data = {
         "text" : $("#editor").val(),
-        "ClientsCursorPosition" : clientsCursorsPosition
+        "ClientsCursorPosition" : 0
     };
 
 
@@ -41,10 +32,17 @@ $(function () {
     return false;
   });
 
+  /*socket.on("clientLeft", function(data) {
+      data.foreach(user => {
+          $("#userList").append("<li>" + user "</li>")
+      })
+  });*/
+
+
   socket.on('typing', function(data){
       $('#editor').val(data.text);
       //clientsCursorsPosition =
       //data.ClientsCursorPosition.forEach()
       //alert(data.cursorPosition);
-    });
+  });
 });
