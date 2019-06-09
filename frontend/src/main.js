@@ -1,9 +1,18 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router';
-import GSignInButton from 'vue-google-signin-button'
-Vue.use(GSignInButton)
+import VueSocketIO from 'vue-socket.io'
+
 Vue.config.productionTip = false
+
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: 'http://localhost:3000',
+    vuex: {
+        actionPrefix: 'SOCKET_',
+        mutationPrefix: 'SOCKET_'
+    }
+}))
 
 new Vue({
   router,
