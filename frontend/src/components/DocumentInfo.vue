@@ -6,9 +6,9 @@
             </div>
             <div class = "uk-height-1-1 info-wrapper">
                 <div class="documentname">
-                    <input :value="name">
+                    <input :value="documentName">
                 </div>
-                <Navigation @print="print"></Navigation>
+                <Navigation @print="print" @download="download"></Navigation>
             </div>
         </div>
     </div>
@@ -20,16 +20,20 @@
         name: "DocumentInfo",
         components: {Navigation},
         props: {
-            users: Array
+            users: Array,
+            documentName: String
         },
         data: () => {
             return {
-                name: "Document 1",
+
             }
         },
         methods: {
             print: function(){
                 this.$emit("print");
+            },
+            download: function(){
+                this.$emit("download");
             }
         }
     }

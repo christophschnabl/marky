@@ -18,7 +18,6 @@ const options = {
     ]
 }
 
-
 Vue.config.productionTip = false
 
 Vue.use(VueHtmlToPaper, options);

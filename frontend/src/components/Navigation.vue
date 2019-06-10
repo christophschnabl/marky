@@ -5,7 +5,7 @@
             <ul class="uk-nav uk-dropdown-nav dropdown">
                 <li><a v-on:click="createDocument">Neu</a></li>
                 <li class="uk-nav-divider"></li>
-                <li><a>Download</a></li>
+                <li><a v-on:click="download">Download</a></li>
                 <li class="uk-nav-divider"></li>
                 <li><a v-on:click="print">Print</a></li>
             </ul>
@@ -13,7 +13,7 @@
         <button class = "uk-margin-auto-vertical" type="button">Help</button>
         <div uk-dropdown="mode:click;" class = "uk-margin-remove">
             <ul class="uk-nav uk-dropdown-nav dropdown">
-                <li><a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a></li>
+                <li><a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown</a></li>
             </ul>
         </div>
     </div>
@@ -32,6 +32,9 @@
             },
             print: function(){
                 this.$emit("print");
+            },
+            download: function(){
+                this.$emit("download");
             }
         }
     }

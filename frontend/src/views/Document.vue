@@ -1,6 +1,6 @@
 <template>
     <div class="document">
-        <DocumentInfo :users="document.users" @print="print"></DocumentInfo>
+        <DocumentInfo :users="document.users" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
         <Toolbar @print="print"
                  @bold="insertBold"
                  @italic="insertItalic"
@@ -37,6 +37,7 @@
         data: () => {
             return {
                 document: {
+                    name: "Dokument 1",
                     text: "",
                     markdown: "",
                     users: [
@@ -122,6 +123,9 @@
                 this.$htmlToPaper('print', () => {
                     console.log('Printing done or got cancelled!');
                 });
+            },
+            download: function(){
+
             }
         }
     }
