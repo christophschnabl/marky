@@ -183,16 +183,6 @@ function onDocumentSave(clientSocket, data) {
     } else { //save existing model
         documentModel.content = data.content;
         documentModel.name = data.name;
-        /*    const conditions = { documentname: documentUuid };
-
-             console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
-
-
-            Model.update(conditions, update, options, callback);
-
-    function callback (err, numAffected) {
-      // numAffected is the number of updated documents
-  })*/
     }
 
     documentModel.save((err, documet) => {
