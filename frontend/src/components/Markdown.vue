@@ -15,5 +15,8 @@
 </script>
 
 <style scoped>
-
+.markdown{
+    padding: 16px;
+    width: 50vw;
+}
 </style>

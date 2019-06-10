@@ -1,19 +1,45 @@
 <template>
-    <div class = "document">
-        <Editor></Editor>
+    <div class="document">
+        <DocumentInfo></DocumentInfo>
+        <Toolbar @print="print"
+                 @bold="insertBold"
+                 @italic="insertItalic"
+                 @strike="insertStrikethrough"
+                 @list="insertList"
+                 @table="insertTable"
+                 @code="insertCode"
+                 @render="renderMarkdown">
+        </Toolbar>
+        <div class="editor-wrapper uk-flex">
+            <div class = "editor">
+                <textarea id="editor" ref="text" :value="document.text"
+                          @input="textChange($event.target.value)"></textarea>
+            </div>
+            <Markdown :value="document.markdown" id="print"></Markdown>
+        </div>
     </div>
 </template>
 
 <script>
-    import Editor from '../components/Editor';
+    import axios from 'axios';
+    import Markdown from '../components/Markdown'
+    import Toolbar from '../components/Toolbar'
+    import DocumentInfo from "../components/DocumentInfo";
 
     export default {
         name: "Document",
+        props: {},
         components: {
-            Editor
+            DocumentInfo,
+            Markdown,
+            Toolbar
         },
         data: () => {
             return {
+                document: {
+                    text: "",
+                    markdown: ""
+                },
                 link: "empty-link",
             }
         },
@@ -24,13 +50,112 @@
             connect: function () {
                 this.$socket.emit("recieveDocumentUuid", {"clientUuid": "hansi", "documentUuid": this.link});
                 console.log('socket connected')
+            },
+            typing: function (data) {
+                this.document.text = data.text;
+            }
+        },
+        methods: {
+            textChange: function (text) {
+                const cursorPosition = this.$refs.text.selectionStart;
+
+                const data = {
+                    "text": text,
+                    "ClientsCursorPosition": cursorPosition
+                };
+
+                this.$socket.emit("typing", data);
+            },
+            renderMarkdown: function () {
+                const obj = {
+                    text: this.document.text
+                };
+                axios
+                    .post('http://localhost:3000/render', obj)
+                    .then(res => this.document.markdown = res.data)
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            insertBold: function () {
+                this.insert(' **Bold** ');
+            },
+            insertItalic: function () {
+                this.insert(' *Italic* ');
+            },
+            insertStrikethrough: function () {
+                this.insert(' ~~Strikethrough~~ ');
+            },
+            insertList: function () {
+                this.insert('* Item\r\n' +
+                    '* Item\r\n' +
+                    '* Item\r\n');
+            },
+            insertCode: function () {
+                this.insert('```\r\npublic void ungarn(){\n' +
+                    '    println(\'hansi\');\n' +
+                    '}\r\n```');
+            },
+            insertTable: function () {
+                this.insert("| Tables        | Are           | Cool  |\n" +
+                    "| ------------- |:-------------:| -----:|\n" +
+                    "| col 3 is      | right-aligned | $1600 |\n" +
+                    "| col 2 is      | centered      |   $12 |\n" +
+                    "| zebra stripes | are neat      |    $1 |\n")
+            },
+            insert: function (text) {
+                const textarea = this.$refs.text;
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+
+                //insert text
+                this.document.text = this.document.text.substring(0, startPos) +
+                    text + this.document.text.substring(endPos, this.document.text.length);
+
+                //TODO: Move cursor
+            },
+            print() {
+                this.$htmlToPaper('print', () => {
+                    console.log('Printing done or got cancelled!');
+                });
             }
         }
     }
 </script>
 
 <style scoped>
-    .document{
+    .document {
         height: 100vh;
+    }
+
+    .wrapper {
+        padding: 8px 0;
+    }
+
+    .editor-wrapper{
+        /* 100% - (toolbar height + documentinfo height + documentinfo padding + edtior padding)*/
+        height: calc(100% - (42px + 42px + 16px + 16px));
+    }
+
+    .editor{
+        border-right: 1px solid lightgrey;
+    }
+
+    .editor textarea {
+        margin: 0;
+        height: 100%;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #333;
+        padding: 16px;
+        border: none;
+        resize: none;
+        outline: none;
+        font-size: 18px;
+        display: inline-block;
+        width: 50vw;
+        vertical-align: top;
+        box-sizing: border-box;
+        background: #f6f6f6;
+
     }
 </style>
