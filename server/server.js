@@ -32,6 +32,7 @@ let documentModels = [];
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 let clientSocketIdWithRooms = {}; //save clients with respective rooms bc of socket io
+let cursorPositions = [];
 
 function getAllClientsForRoom(documentUuid, callback) {
     io.of('/').in(documentUuid).clients(function(error, clients) {
@@ -209,10 +210,30 @@ function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
 
     roomsWithContents[room] = typeData.text;
-    //console.log(roomsWithContents);
+
+    getNameBySocketId(clientSocket.id, (uuid) => {
+        let cursorPositionSaved = false;
+        for (let i = 0; i < cursorPositions.length; i++) {
+            if (cursorPositions[i].name === uuid) {
+                cursorPositionSaved = i;
+                break;
+            }
+        }
+
+        if (cursorPositionSaved === false) {
+            cursorPositions.push({name : uuid, cursorPosition : typeData.cursorPosition});
+        } else {
+            cursorPositions[cursorPositionSaved] = {name : uuid, cursorPosition : typeData.cursorPosition};
+        }
+    });
 
 
-    io.to(room).emit('typing', typeData);
+    data = {
+        "text" : typeData.text,
+        "cursorPositions" : cursorPositions
+    };
+
+    io.to(room).emit('typing', data);
 }
 
 io.on("connection", onConnection);

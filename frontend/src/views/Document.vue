@@ -71,6 +71,8 @@
             },
             typing: function (data) {
                 this.document.text = data.text;
+                //set cursor position here ->
+
             },
             clientJoined: function(client) {
                 const emoji = RandomEmoji.get(client.split(" ")[1]);
@@ -95,9 +97,10 @@
             textChange: function (text) {
                 const cursorPosition = this.$refs.text.selectionStart;
 
+
                 const data = {
                     "text": text,
-                    "ClientsCursorPosition": cursorPosition
+                    "cursorPosition": cursorPosition
                 };
 
                 this.$socket.emit("typing", data);
