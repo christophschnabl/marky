@@ -43,7 +43,8 @@
                     name: "Dokument 1",
                     text: "",
                     markdown: "",
-                    users: []
+                    users: [
+                    ]
                 },
                 link: "empty-link",
             }
@@ -71,8 +72,9 @@
             typing: function (data) {
                 this.document.text = data.text;
 
-                //set cursor position here ->
+                //set cursor position here @MR ->
                 console.log(data.cursorPositions);
+            
             },
             clientJoined: function(client) {
                 const emoji = RandomEmoji.get(client.split(" ")[1]);
