@@ -11,6 +11,9 @@
                 <Navigation @print="print"></Navigation>
             </div>
         </div>
+        <p v-for="user in users">
+          {{ user.name }} : {{ user.emoji }}
+        </p>
         <UserList></UserList>
     </div>
 </template>
