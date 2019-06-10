@@ -1,6 +1,5 @@
 <template>
     <div class="">
-        hanis2
     </div>
 </template>
 

@@ -44,8 +44,6 @@
                     text: "",
                     markdown: "",
                     users: [
-                        {name: "MR"},
-                        {name: "AA"}
                     ]
                 },
                 link: "empty-link",
@@ -56,12 +54,6 @@
         },
         sockets: {
             connect: function () {
-                this.$socket.emit("recieveDocumentUuid", {"clientUuid": "hansi", "documentUuid": this.link});
-                console.log('socket connected');
-            },
-            typing: function (data) {
-                this.document.text = data.text;
-
                 let adjective = Sentencer.make("{{ adjective }}");
                 const emoji = RandomEmoji.random();
 
@@ -69,8 +61,32 @@
                     adjective = Sentencer.make("{{ adjective }}")
                 }
 
-                console.log(emoji);
-                console.log(adjective);
+                const clientUuid = adjective + " " + emoji.key;
+
+                const user = { "name" : clientUuid, "emoji" : emoji.emoji};
+
+                this.document.users.push(user);
+
+                this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
+            },
+            typing: function (data) {
+                this.document.text = data.text;
+            },
+            clientJoined: function(client) {
+                const emoji = RandomEmoji.get(client.split(" ")[1]);
+
+                const user = { "name" : client, "emoji" : emoji};
+
+                this.document.users.push(user);
+            },
+            clientLeft: function(client) {
+                this.doucment.users.filter(user =>{
+                    if (user.name === client) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
             }
         },
         methods: {
