@@ -119,7 +119,7 @@ function removeFromClientList(clientSocketId) {
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
-    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data)); //dk yet what data needs to be
+    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data)); 
 
     clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
 
@@ -156,8 +156,9 @@ function onRecieveDocumentUuid(clientSocket, client) {
 }
 
 function onDocumentSave(clientSocket, data) {
-    const document = getDocumentByClientSocketId(clientSocket.id);
-    console.log(document);
+    const documentUuid = getRoomForClient(clientSocket);
+    console.log("Saving: " + documentUuid + " with content: " + data);
+
     //save oder update?
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="document">
-        <DocumentInfo :users="document.users" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
+        <DocumentInfo :users="document.users" @save="save" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
         <Toolbar @print="print"
                  @bold="insertBold"
                  @italic="insertItalic"
@@ -147,6 +147,9 @@
                 text + this.document.text.substring(endPos, this.document.text.length);
 
                 //TODO: Move cursor
+            },
+            save() {
+                this.$socket.emit("saveDocument", this.document.text);
             },
             print() {
                 this.$htmlToPaper('print', () => {
