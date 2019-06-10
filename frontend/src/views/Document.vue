@@ -80,6 +80,8 @@
                 this.document.users.push(user);
             },
             clientLeft: function(client) {
+
+                console.log(this.document.users);
                 this.doucment.users.filter(user =>{
                     if (user.name === client) {
                         return false;

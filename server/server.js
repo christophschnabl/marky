@@ -153,7 +153,6 @@ function onRecieveDocumentUuid(clientSocket, client) {
     getAllClientsForRoom(client.documentUuid, clients => {
         for (let i = 0; i < clients.length; i++) {
             getNameBySocketId(clients[i], (uuid) =>{
-                console.log(uuid);
                 clientSocket.emit("clientJoined", uuid);
             });
         }
@@ -193,8 +192,13 @@ function onDocumentSave(clientSocket, data) {
 function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
     //let othr clients know that client left the document
     const room = getRoomForClientAfterDisconnection(clientSocket.id);
-    //console.log("Client: " + getNameBySocketId(clientSocket.id) + " left channel: " + room);
-    //io.to(room).emit("clientLeft", getNameBySocketId(clientSocket.id));
+
+     getNameBySocketId(clientSocket.id, (name) => {
+         console.log("Client: " + name + " left channel: " + room);
+
+         //let others know that client left
+         io.in(room).emit("clientLeft", name);
+     });
 
     //leave from room
     clientSocket.leave();
