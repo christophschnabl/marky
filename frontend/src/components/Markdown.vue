@@ -19,6 +19,7 @@
 .markdown{
     padding: 16px;
     width: 50vw;
+    overflow-y: auto;
 }
 </style>
 <style src="../../node_modules/github-markdown-css/github-markdown.css"></style>
