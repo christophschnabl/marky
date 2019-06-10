@@ -11,6 +11,7 @@
         name: "ToolbarElement",
         props: {
             icon: String,
+            descr: String,
         },
         data: function(){
             return {
@@ -24,7 +25,7 @@
             }
         },
         created: function(){
-            this.iconTooltip = `title:${this.icon};pos:bottom`;
+            this.iconTooltip = `title:${this.descr};pos:bottom`;
             this.iconAttribute = `icon:${this.icon};ratio:1.1`;
         }
     }

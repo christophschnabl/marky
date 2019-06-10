@@ -1,15 +1,17 @@
 <template>
     <div class="uk-width-1-1 uk-flex toolbar">
-        <ToolbarElement icon="print" @pressed="print"></ToolbarElement>
+        <ToolbarElement icon="print" descr="Print" @pressed="print"></ToolbarElement>
         <hr class="divider">
-        <ToolbarElement icon="bold" @pressed="bold"></ToolbarElement>
-        <ToolbarElement icon="italic" @pressed="italic"></ToolbarElement>
-        <ToolbarElement icon="strikethrough" @pressed="strike"></ToolbarElement>
+        <ToolbarElement icon="bold" descr="Bold" @pressed="bold"></ToolbarElement>
+        <ToolbarElement icon="italic" descr="Italic" @pressed="italic"></ToolbarElement>
+        <ToolbarElement icon="strikethrough" descr="Strikethrough" @pressed="strike"></ToolbarElement>
         <hr class="divider">
-        <ToolbarElement icon="list" @pressed="list"></ToolbarElement>
-        <ToolbarElement icon="table" @pressed="table"></ToolbarElement>
+        <ToolbarElement icon="list" descr="List" @pressed="list"></ToolbarElement>
+        <ToolbarElement icon="table" descr="Table" @pressed="table"></ToolbarElement>
         <hr class="divider">
-        <ToolbarElement icon="code" @pressed="code"></ToolbarElement>
+        <ToolbarElement icon="code" descr="Code" @pressed="code"></ToolbarElement>
+        <hr class="divider">
+        <ToolbarElement icon="play" descr="Render" @pressed="render"></ToolbarElement>
     </div>
 </template>
 
@@ -20,27 +22,17 @@
         name: "toolbar",
         components: {ToolbarElement},
         methods: {
-            print: function () {
-                this.$emit("print");
+            emit: function(e){
+                this.$emit(e);
             },
-            bold: function () {
-                this.$emit("bold");
-            },
-            italic: function () {
-                this.$emit("italic");
-            },
-            strike: function () {
-                this.$emit("strike");
-            },
-            list: function () {
-                this.$emit("list");
-            },
-            table: function () {
-                this.$emit("table");
-            },
-            code: function () {
-                this.$emit("code");
-            },
+            print: function(){this.emit("print")},
+            bold: function(){this.emit("bold")},
+            italic: function(){this.emit("italic")},
+            strike: function(){this.emit("strike")},
+            list: function(){this.emit("list")},
+            table: function(){this.emit("table")},
+            code: function(){this.emit("code")},
+            render: function(){this.emit("render")}
         }
     }
 </script>
@@ -58,5 +50,6 @@
         border-bottom: 1px solid lightgrey;
         border-top: 1px solid lightgrey;
         background: white;
+        padding: 0 0 0 16px;
     }
 </style>
