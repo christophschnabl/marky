@@ -119,7 +119,7 @@ function removeFromClientList(clientSocketId) {
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
-    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data)); 
+    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data));
 
     clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
 
