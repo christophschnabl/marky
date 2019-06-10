@@ -1,6 +1,6 @@
 <template>
-    <div class="document-info">
-        <div class="uk-flex">
+    <div class="document-info uk-flex">
+        <div class="uk-flex uk-margin-auto-vertical">
             <div class = "logo uk-flex">
                 <span class = "uk-margin-auto-vertical uk-margin-auto">✏️</span>
             </div>
@@ -26,6 +26,7 @@
 <style scoped>
     .document-info{
         padding: 16px;
+        height: 42px;
     }
 
     .documentname{
@@ -37,15 +38,17 @@
         color: black;
         margin-bottom: 0;
         outline: none;
-        border: 1px solid transparent;
+        padding: 2px 4px;
+        border: none;
+        border-bottom: 1.5px solid lightgrey;
     }
 
     .documentname input:hover{
-        border: 1px solid lightgrey;
+        border-bottom: 1.5px solid darkgrey;
     }
 
     .documentname input:focus{
-        border: 1px solid deepskyblue;
+        border-bottom: 1.5px solid deepskyblue;
     }
 
     .logo{
