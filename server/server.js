@@ -186,8 +186,14 @@ function onDocumentSave(clientSocket, data) {
     }
 
     documentModel.save((err, documet) => {
-         if (err) return console.error(err);
-         console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+         if (err) {
+             console.error(err);
+             clientSocket.emit("saveStatus", false);
+
+         } else {
+             console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+             clientSocket.emit("saveStatus", true);
+         }
     });
 }
 

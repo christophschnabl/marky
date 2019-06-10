@@ -74,7 +74,7 @@
 
                 //set cursor position here @MR ->
                 console.log(data.cursorPositions);
-            
+
             },
             clientJoined: function(client) {
                 const emoji = RandomEmoji.get(client.split(" ")[1]);
@@ -82,6 +82,14 @@
                 const user = { "name" : client, "emoji" : emoji};
 
                 this.document.users.push(user);
+            },
+            saveStatus: function(status) {
+                if (status === true) {
+                    alert("Yuhu");
+                } else {
+                    alert("Irgendwas is hinich! ;(");
+                }
+
             },
             clientLeft: function(client) {
 
