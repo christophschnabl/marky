@@ -22,7 +22,8 @@
 
 <script>
     import axios from 'axios';
-    import randomEmoji from 'node-emoji';
+    import RandomEmoji from 'node-emoji';
+    import Sentencer from 'sentencer';
     import Markdown from '../components/Markdown';
     import Toolbar from '../components/Toolbar';
     import DocumentInfo from "../components/DocumentInfo";
@@ -55,12 +56,19 @@
             connect: function () {
                 this.$socket.emit("recieveDocumentUuid", {"clientUuid": "hansi", "documentUuid": this.link});
                 console.log('socket connected');
-                //alert(randomEmoji.random());
             },
             typing: function (data) {
                 this.document.text = data.text;
 
-                console.log(randomEmoji.random());
+                let adjective = Sentencer.make("{{ adjective }}");
+                const emoji = RandomEmoji.random();
+
+                while(!emoji.key.startsWith(adjective[0])) {
+                    adjective = Sentencer.make("{{ adjective }}")
+                }
+
+                console.log(emoji);
+                console.log(adjective);
             }
         },
         methods: {
@@ -118,7 +126,7 @@
 
                 //insert text
                 this.document.text = this.document.text.substring(0, startPos) +
-                    text + this.document.text.substring(endPos, this.document.text.length);
+                text + this.document.text.substring(endPos, this.document.text.length);
 
                 //TODO: Move cursor
             },
