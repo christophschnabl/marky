@@ -20,6 +20,7 @@
     "vue-google-oauth2": "^1.3.8",
     "vue-google-signin-button": "^1.0.4",
     "vue-html-to-paper": "^1.1.0",
+    "vue-html2canvas": "0.0.4",
     "vue-router": "^3.0.6",
     "vue-shortkey": "^3.1.7",
     "vue-socket.io": "^3.0.7",

@@ -22,6 +22,7 @@
 
 <script>
     import axios from 'axios';
+    import jsPDF from 'jspdf'
     import RandomEmoji from 'node-emoji';
     import Sentencer from 'sentencer';
     import Markdown from '../components/Markdown';
@@ -137,7 +138,11 @@
                 });
             },
             download: function(){
-
+                const doc = new jsPDF();
+                doc.fromHTML(this.document.markdown, 15, 15, {
+                    width: 170
+                });
+                doc.save(this.document.name + ".pdf");
             }
         }
     }
