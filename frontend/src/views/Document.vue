@@ -149,7 +149,7 @@
                 //TODO: Move cursor
             },
             save() {
-                this.$socket.emit("saveDocument", this.document.text);
+                this.$socket.emit("saveDocument", {"content": this.document.text, "name": this.document.name});
             },
             print() {
                 this.$htmlToPaper('print', () => {

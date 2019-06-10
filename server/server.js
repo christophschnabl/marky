@@ -28,6 +28,7 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + "/client/login.html");
 });
 
+let documentModels = [];
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 let clientSocketIdWithRooms = {}; //save clients with respective rooms bc of socket io
@@ -57,6 +58,7 @@ function getContentForDocument(documentUuid, callback) {
 
             if (document !== undefined && document !== null) {
                 roomsWithContents[documentUuid] = document.content;
+                documentModels.push(document);
                 callback(document.content);
             } else { //document is empty
                 //createDocument
@@ -101,6 +103,14 @@ function getNameBySocketId(clientSocketId, callback) {
     });
 }
 
+function getDocumentModelForUuid(documentUuid) {
+    for (let i = 0; i < documentModels.length; i++) {
+        if (documentModels[i].documentUuid === documentUuid) {
+            return documentModels[i];
+        }
+    }
+    return undefined;
+}
 
 function addToClientList(clientSocketId, clientUuid) {
     clientSocketIdWithClientUuids.push({"clientSocketId" : clientSocketId, "clientUuid" : clientUuid});
@@ -156,10 +166,28 @@ function onRecieveDocumentUuid(clientSocket, client) {
 }
 
 function onDocumentSave(clientSocket, data) {
+    //find current document
     const documentUuid = getRoomForClient(clientSocket);
-    console.log("Saving: " + documentUuid + " with content: " + data);
 
-    //save oder update?
+    //find Document model for documentUuid
+    let documentModel = getDocumentModelForUuid(documentUuid)
+
+    console.log("Saving: " + documentUuid + " with content: " + data.content + "and name: " + data.name);
+
+
+    //if model doesnt exist -> create and save new one - TODO create when loading?
+    if (documentModel === undefined) {
+        documentModel = new Document({documentUuid: documentUuid, content: data.content, name: data.name});
+
+    } else { //save existing model
+        documentModel.content = data.content;
+        documentModel.name = data.name;
+    }
+
+    documentModel.save((err, documet) => {
+         if (err) return console.error(err);
+         console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+    });
 }
 
 function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
