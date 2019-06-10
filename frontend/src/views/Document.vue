@@ -71,8 +71,9 @@
             },
             typing: function (data) {
                 this.document.text = data.text;
-                //set cursor position here ->
 
+                //set cursor position here ->
+                console.log(data.cursorPositions);
             },
             clientJoined: function(client) {
                 const emoji = RandomEmoji.get(client.split(" ")[1]);
@@ -83,14 +84,14 @@
             },
             clientLeft: function(client) {
 
-                console.log(this.document.users);
+                /*console.log(this.document.users);
                 this.doucment.users.filter(user =>{
                     if (user.name === client) {
                         return false;
                     } else {
                         return true;
                     }
-                })
+                })*/
             }
         },
         methods: {
