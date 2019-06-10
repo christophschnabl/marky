@@ -22,8 +22,9 @@
 
 <script>
     import axios from 'axios';
-    import Markdown from '../components/Markdown'
-    import Toolbar from '../components/Toolbar'
+    import randomEmoji from 'node-emoji';
+    import Markdown from '../components/Markdown';
+    import Toolbar from '../components/Toolbar';
     import DocumentInfo from "../components/DocumentInfo";
 
     export default {
@@ -53,10 +54,13 @@
         sockets: {
             connect: function () {
                 this.$socket.emit("recieveDocumentUuid", {"clientUuid": "hansi", "documentUuid": this.link});
-                console.log('socket connected')
+                console.log('socket connected');
+                //alert(randomEmoji.random());
             },
             typing: function (data) {
                 this.document.text = data.text;
+
+                console.log(randomEmoji.random());
             }
         },
         methods: {

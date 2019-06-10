@@ -11,14 +11,20 @@
                 <Navigation @print="print"></Navigation>
             </div>
         </div>
+        <UserList></UserList>
     </div>
 </template>
 
 <script>
     import Navigation from "./Navigation";
+    import UserList from "./UserList";
+
     export default {
         name: "DocumentInfo",
-        components: {Navigation},
+        components: {
+            Navigation,
+            UserList
+        },
         props: {
             users: Array
         },

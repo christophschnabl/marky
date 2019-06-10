@@ -1,26 +1,24 @@
 <template>
-    <div>
-        wieso geht der scheiss ned
+    <div class="">
+        hanis2
     </div>
 </template>
 
 <script>
 
     export default {
-        name: "Navbar",
+        name: "UserList",
+        components: {
+        },
         props: {
-
         },
         data: () => {
-            return{
-            }
+            return {};
         },
         methods: {
-
         }
     }
 </script>
 
 <style scoped>
-
 </style>
