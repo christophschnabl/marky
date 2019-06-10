@@ -1,6 +1,6 @@
 <template>
     <div class="document">
-        <DocumentInfo></DocumentInfo>
+        <DocumentInfo :users="document.users" @print="print"></DocumentInfo>
         <Toolbar @print="print"
                  @bold="insertBold"
                  @italic="insertItalic"
@@ -38,7 +38,11 @@
             return {
                 document: {
                     text: "",
-                    markdown: ""
+                    markdown: "",
+                    users: [
+                        {name: "MR"},
+                        {name: "AA"}
+                    ]
                 },
                 link: "empty-link",
             }
@@ -134,7 +138,7 @@
 
     .editor-wrapper{
         /* 100% - (toolbar height + documentinfo height + documentinfo padding + edtior padding)*/
-        height: calc(100% - (42px + 42px + 16px + 16px));
+        height: calc(100% - (42px + 52px + 16px + 16px));
     }
 
     .editor{

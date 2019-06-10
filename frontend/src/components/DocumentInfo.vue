@@ -4,20 +4,32 @@
             <div class = "logo uk-flex">
                 <span class = "uk-margin-auto-vertical uk-margin-auto">✏️</span>
             </div>
-
-            <div class="uk-height-1-1 documentname uk-margin-auto-vertical">
-                <input :value="name">
+            <div class = "uk-height-1-1 info-wrapper">
+                <div class="documentname">
+                    <input :value="name">
+                </div>
+                <Navigation @print="print"></Navigation>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import Navigation from "./Navigation";
     export default {
         name: "DocumentInfo",
+        components: {Navigation},
+        props: {
+            users: Array
+        },
         data: () => {
             return {
                 name: "Document 1",
+            }
+        },
+        methods: {
+            print: function(){
+                this.$emit("print");
             }
         }
     }
@@ -26,33 +38,40 @@
 <style scoped>
     .document-info{
         padding: 16px;
-        height: 42px;
+        height: 52px;
     }
 
-    .documentname{
+    .info-wrapper{
         margin-left: 16px;
     }
 
     .documentname input{
-        font-size: 18px;
+        font-weight: 200;
+        font-size: 16px;
         color: black;
         margin-bottom: 0;
         outline: none;
         padding: 2px 4px;
         border: none;
-        border-bottom: 1.5px solid lightgrey;
+        border-bottom: 1px solid lightgrey;
     }
 
     .documentname input:hover{
-        border-bottom: 1.5px solid darkgrey;
+        border-bottom: 1px solid darkgrey;
     }
 
     .documentname input:focus{
-        border-bottom: 1.5px solid deepskyblue;
+        border-bottom: 1px solid deepskyblue;
     }
 
     .logo{
         width: 32px;
         font-size: 22px;
     }
+
+    .users{
+        position: absolute;
+        right: 16px;
+    }
+
 </style>

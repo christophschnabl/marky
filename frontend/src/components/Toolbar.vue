@@ -10,8 +10,10 @@
         <ToolbarElement icon="table" descr="Table" @pressed="table"></ToolbarElement>
         <hr class="divider">
         <ToolbarElement icon="code" descr="Code" @pressed="code"></ToolbarElement>
-        <hr class="divider">
-        <ToolbarElement icon="play" descr="Render" @pressed="render"></ToolbarElement>
+        <div id = "render" class ="uk-flex">
+            <hr class = "divider">
+            <ToolbarElement icon="play" descr="Render" @pressed="render"></ToolbarElement>
+        </div>
     </div>
 </template>
 
@@ -51,5 +53,10 @@
         border-top: 1px solid lightgrey;
         background: white;
         padding: 0 0 0 16px;
+    }
+
+    #render{
+        position: absolute;
+        right: calc(50% - 43px); /* 42px + 1px (divider)*/
     }
 </style>
