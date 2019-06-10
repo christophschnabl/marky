@@ -8,7 +8,7 @@
                 <div class="documentname">
                     <input :value="documentName">
                 </div>
-                <Navigation @print="print" @download="download"></Navigation>
+                <Navigation @save="save" @print="print" @download="download"></Navigation>
             </div>
         </div>
         <p v-for="user in users">
@@ -43,6 +43,9 @@
             },
             download: function(){
                 this.$emit("download");
+            },
+            save: function(){
+                this.$emit("save");
             }
         }
     }

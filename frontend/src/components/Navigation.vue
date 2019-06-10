@@ -4,6 +4,7 @@
         <div uk-dropdown="mode:click;" class = "uk-margin-remove">
             <ul class="uk-nav uk-dropdown-nav dropdown">
                 <li><a v-on:click="createDocument">New Document</a></li>
+                <li><a v-on:click="saveDocument">Save</a></li>
                 <li class="uk-nav-divider"></li>
                 <li><a v-on:click="download">Download</a></li>
                 <li><a v-on:click="print">Print</a></li>
@@ -29,12 +30,16 @@
                 console.log(id);
                 this.$router.push(`/documents/${id}`);
             },
+            saveDocument: function() {
+                this.$emit("save");  
+            },
             print: function(){
                 this.$emit("print");
             },
             download: function(){
                 this.$emit("download");
             }
+
         }
     }
 </script>

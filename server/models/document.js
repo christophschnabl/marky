@@ -5,6 +5,9 @@ const documentSchema = new mongoose.Schema({
       type: String,
       unique: true,
   },
+  name: {
+     type: String 
+  },
   content: {
       type: String
   },

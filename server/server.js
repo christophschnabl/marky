@@ -28,15 +28,17 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + "/client/login.html");
 });
 
+let documentModels = [];
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 let clientSocketIdWithRooms = {}; //save clients with respective rooms bc of socket io
+let cursorPositions = [];
 
-function getAllClientsForRoom(documentUuid) {
-    io.of('/').in(documentUuid).clients(function(error,clients) {
+function getAllClientsForRoom(documentUuid, callback) {
+    io.of('/').in(documentUuid).clients(function(error, clients) {
         if (error) console.error("Room doesn't exist: " + error);
 
-        return clients;
+        callback(clients);
     });
 }
 
@@ -57,6 +59,7 @@ function getContentForDocument(documentUuid, callback) {
 
             if (document !== undefined && document !== null) {
                 roomsWithContents[documentUuid] = document.content;
+                documentModels.push(document);
                 callback(document.content);
             } else { //document is empty
                 //createDocument
@@ -93,16 +96,22 @@ function getRoomForClient(clientSocket) {
 }
 
 
-function getNameBySocketId(clientSocketId) {
-    console.log(clientSocketIdWithClientUuids);
-
-    clientSocketIdWithClientUuids = clientSocketIdWithClientUuids.filter(client => {
+function getNameBySocketId(clientSocketId, callback) {
+     clientSocketIdWithClientUuids.filter(client => {
         if (client.clientSocketId === clientSocketId) {
-            return client.clientUuid;
+            callback(client.clientUuid);
         }
     });
 }
 
+function getDocumentModelForUuid(documentUuid) {
+    for (let i = 0; i < documentModels.length; i++) {
+        if (documentModels[i].documentUuid === documentUuid) {
+            return documentModels[i];
+        }
+    }
+    return undefined;
+}
 
 function addToClientList(clientSocketId, clientUuid) {
     clientSocketIdWithClientUuids.push({"clientSocketId" : clientSocketId, "clientUuid" : clientUuid});
@@ -121,7 +130,7 @@ function removeFromClientList(clientSocketId) {
 function onConnection(clientSocket) {
     clientSocket.on("recieveDocumentUuid", (client) => onRecieveDocumentUuid(clientSocket, client));
 
-    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data)); //dk yet what data needs to be
+    clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data));
 
     clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
 
@@ -141,23 +150,56 @@ function onRecieveDocumentUuid(clientSocket, client) {
         io.to(client.documentUuid).emit("typing", {"text" : content});
     });
 
-    //let other users know that this client Joined
+    // get all users for this document
+    getAllClientsForRoom(client.documentUuid, clients => {
+        for (let i = 0; i < clients.length; i++) {
+            getNameBySocketId(clients[i], (uuid) =>{
+                clientSocket.emit("clientJoined", uuid);
+            });
+        }
+    });
+
+
+    // let other users know that this client Joined
     console.log("Client: " + client.clientUuid + " joined channel: " + client.documentUuid);
     clientSocket.broadcast.to(client.documentUuid).emit("clientJoined", client.clientUuid);
 }
 
 function onDocumentSave(clientSocket, data) {
-    const document = getDocumentByClientSocketId(clientSocket.id);
-    console.log(document);
-    //save oder update?
+    //find current document
+    const documentUuid = getRoomForClient(clientSocket);
+
+    //find Document model for documentUuid
+    let documentModel = getDocumentModelForUuid(documentUuid)
+
+    console.log("Saving: " + documentUuid + " with content: " + data.content + "and name: " + data.name);
+
+
+    //if model doesnt exist -> create and save new one - TODO create when loading?
+    if (documentModel === undefined) {
+        documentModel = new Document({documentUuid: documentUuid, content: data.content, name: data.name});
+
+    } else { //save existing model
+        documentModel.content = data.content;
+        documentModel.name = data.name;
+    }
+
+    documentModel.save((err, documet) => {
+         if (err) return console.error(err);
+         console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+    });
 }
 
 function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
     //let othr clients know that client left the document
     const room = getRoomForClientAfterDisconnection(clientSocket.id);
-    console.log(clientSocket.id);
-    console.log("Client: " + getNameBySocketId(clientSocket.id) + " left channel: " + room);
-    io.to(room).emit("clientLeft", getNameBySocketId(clientSocket.id));
+
+     getNameBySocketId(clientSocket.id, (name) => {
+         console.log("Client: " + name + " left channel: " + room);
+
+         //let others know that client left
+         io.in(room).emit("clientLeft", name);
+     });
 
     //leave from room
     clientSocket.leave();
@@ -168,10 +210,30 @@ function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
 
     roomsWithContents[room] = typeData.text;
-    //console.log(roomsWithContents);
+
+    getNameBySocketId(clientSocket.id, (uuid) => {
+        let cursorPositionSaved = false;
+        for (let i = 0; i < cursorPositions.length; i++) {
+            if (cursorPositions[i].name === uuid) {
+                cursorPositionSaved = i;
+                break;
+            }
+        }
+
+        if (cursorPositionSaved === false) {
+            cursorPositions.push({name : uuid, cursorPosition : typeData.cursorPosition});
+        } else {
+            cursorPositions[cursorPositionSaved] = {name : uuid, cursorPosition : typeData.cursorPosition};
+        }
+    });
 
 
-    io.to(room).emit('typing', typeData);
+    data = {
+        "text" : typeData.text,
+        "cursorPositions" : cursorPositions
+    };
+
+    io.to(room).emit('typing', data);
 }
 
 io.on("connection", onConnection);

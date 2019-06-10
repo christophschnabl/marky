@@ -1,6 +1,6 @@
 <template>
     <div class="document">
-        <DocumentInfo :users="document.users" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
+        <DocumentInfo :users="document.users" @save="save" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
         <Toolbar @print="print"
                  @bold="insertBold"
                  @italic="insertItalic"
@@ -65,12 +65,15 @@
 
                 const user = { "name" : clientUuid, "emoji" : emoji.emoji};
 
-                this.document.users.push(user);
+                //this.document.users.push(user);
 
                 this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
             },
             typing: function (data) {
                 this.document.text = data.text;
+
+                //set cursor position here ->
+                console.log(data.cursorPositions);
             },
             clientJoined: function(client) {
                 const emoji = RandomEmoji.get(client.split(" ")[1]);
@@ -80,22 +83,25 @@
                 this.document.users.push(user);
             },
             clientLeft: function(client) {
+
+                /*console.log(this.document.users);
                 this.doucment.users.filter(user =>{
                     if (user.name === client) {
                         return false;
                     } else {
                         return true;
                     }
-                })
+                })*/
             }
         },
         methods: {
             textChange: function (text) {
                 const cursorPosition = this.$refs.text.selectionStart;
 
+
                 const data = {
                     "text": text,
-                    "ClientsCursorPosition": cursorPosition
+                    "cursorPosition": cursorPosition
                 };
 
                 this.$socket.emit("typing", data);
@@ -147,6 +153,9 @@
                 text + this.document.text.substring(endPos, this.document.text.length);
 
                 //TODO: Move cursor
+            },
+            save() {
+                this.$socket.emit("saveDocument", {"content": this.document.text, "name": this.document.name});
             },
             print() {
                 this.$htmlToPaper('print', () => {
