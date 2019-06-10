@@ -1,8 +1,9 @@
 <template>
-    <div class="markdown" v-html="value"></div>
+    <div class="markdown markdown-body" v-html="value"></div>
 </template>
 
 <script>
+
     export default {
         name: "Markdown",
         props: {
@@ -20,3 +21,4 @@
     width: 50vw;
 }
 </style>
+<style src="../../node_modules/github-markdown-css/github-markdown.css"></style>
