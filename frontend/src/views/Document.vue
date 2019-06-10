@@ -64,7 +64,7 @@
 
                 const user = { "name" : clientUuid, "emoji" : emoji.emoji};
 
-                this.document.users.push(user);
+                //this.document.users.push(user);
 
                 this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
             },
