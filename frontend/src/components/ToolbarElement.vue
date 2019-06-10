@@ -2,7 +2,7 @@
     <div class="toolbar-element uk-flex">
         <button :uk-icon="iconAttribute"
                 class="uk-margin-auto uk-margin-auto-vertical"
-                :uk-tooltip="iconTooltip" v-on:click="pressed"></button>
+                :uk-tooltip="iconTooltip" v-on:click="pressed" v-shortkey.once="shortcut" @shortkey="pressed()"></button>
     </div>
 </template>
 
@@ -12,6 +12,7 @@
         props: {
             icon: String,
             descr: String,
+            shortcut: Array
         },
         data: function(){
             return {
@@ -22,6 +23,9 @@
         methods: {
             pressed: function(){
                 this.$emit("pressed");
+            },
+            test: () => {
+                console.log("xx");
             }
         },
         created: function(){

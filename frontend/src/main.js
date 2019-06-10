@@ -18,9 +18,9 @@ const options = {
     ]
 }
 
-
 Vue.config.productionTip = false
 
+Vue.use(require('vue-shortkey'))
 Vue.use(VueHtmlToPaper, options);
 Vue.use(UUID);
 Vue.use(new VueSocketIO({
