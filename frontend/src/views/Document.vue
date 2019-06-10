@@ -43,8 +43,7 @@
                     name: "Dokument 1",
                     text: "",
                     markdown: "",
-                    users: [
-                    ]
+                    users: []
                 },
                 link: "empty-link",
             }

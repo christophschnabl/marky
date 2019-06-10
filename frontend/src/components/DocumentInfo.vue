@@ -11,10 +11,7 @@
                 <Navigation @save="save" @print="print" @download="download"></Navigation>
             </div>
         </div>
-        <p v-for="user in users">
-          {{ user.name }} : {{ user.emoji }}
-        </p>
-        <UserList></UserList>
+        <UserList :users="users"></UserList>
     </div>
 </template>
 
@@ -55,6 +52,7 @@
     .document-info{
         padding: 16px;
         height: 52px;
+        position: relative;
     }
 
     .info-wrapper{
