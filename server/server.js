@@ -32,11 +32,11 @@ let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
 let clientSocketIdWithRooms = {}; //save clients with respective rooms bc of socket io
 
-function getAllClientsForRoom(documentUuid) {
-    io.of('/').in(documentUuid).clients(function(error,clients) {
+function getAllClientsForRoom(documentUuid, callback) {
+    io.of('/').in(documentUuid).clients(function(error, clients) {
         if (error) console.error("Room doesn't exist: " + error);
 
-        return clients;
+        callback(clients);
     });
 }
 
@@ -93,12 +93,10 @@ function getRoomForClient(clientSocket) {
 }
 
 
-function getNameBySocketId(clientSocketId) {
-    console.log(clientSocketIdWithClientUuids);
-
-    clientSocketIdWithClientUuids = clientSocketIdWithClientUuids.filter(client => {
+function getNameBySocketId(clientSocketId, callback) {
+     clientSocketIdWithClientUuids.filter(client => {
         if (client.clientSocketId === clientSocketId) {
-            return client.clientUuid;
+            callback(client.clientUuid);
         }
     });
 }
@@ -141,7 +139,18 @@ function onRecieveDocumentUuid(clientSocket, client) {
         io.to(client.documentUuid).emit("typing", {"text" : content});
     });
 
-    //let other users know that this client Joined
+    // get all users for this document
+    getAllClientsForRoom(client.documentUuid, clients => {
+        for (let i = 0; i < clients.length; i++) {
+            getNameBySocketId(clients[i], (uuid) =>{
+                console.log(uuid);
+                clientSocket.emit("clientJoined", uuid);
+            });
+        }
+    });
+
+
+    // let other users know that this client Joined
     console.log("Client: " + client.clientUuid + " joined channel: " + client.documentUuid);
     clientSocket.broadcast.to(client.documentUuid).emit("clientJoined", client.clientUuid);
 }
@@ -155,9 +164,8 @@ function onDocumentSave(clientSocket, data) {
 function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
     //let othr clients know that client left the document
     const room = getRoomForClientAfterDisconnection(clientSocket.id);
-    console.log(clientSocket.id);
-    console.log("Client: " + getNameBySocketId(clientSocket.id) + " left channel: " + room);
-    io.to(room).emit("clientLeft", getNameBySocketId(clientSocket.id));
+    //console.log("Client: " + getNameBySocketId(clientSocket.id) + " left channel: " + room);
+    //io.to(room).emit("clientLeft", getNameBySocketId(clientSocket.id));
 
     //leave from room
     clientSocket.leave();
