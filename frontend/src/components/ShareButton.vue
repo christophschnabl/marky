@@ -49,7 +49,8 @@
     }
 
     button:hover {
-        background: gray;
+        background: #27ae60;
         transition: 0.35s ease;
+        cursor: pointer;
     }
 </style>
