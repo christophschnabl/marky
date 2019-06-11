@@ -58,24 +58,13 @@
             }
         },
         created: function () {
+            console.log("document loaded or created");
             this.link = this.$route.params.id;
+            this.recieve();
         },
         sockets: {
             connect: function () {
-                let adjective = Sentencer.make("{{ adjective }}");
-                const emoji = RandomEmoji.random();
-
-                while(!emoji.key.startsWith(adjective[0])) {
-                    adjective = Sentencer.make("{{ adjective }}")
-                }
-
-                const clientUuid = adjective + " " + emoji.key;
-
-                //const user = { "name" : clientUuid, "emoji" : emoji.emoji};
-
-                //this.document.users.push(user);
-
-                this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
+                this.recieve();
             },
             typing: function (data) {
                 this.document.text = data.text;
@@ -190,6 +179,23 @@
             },
             updateDocumentName: function(name){
                 this.document.name = name;
+            },
+            recieve: function(){
+                let adjective = Sentencer.make("{{ adjective }}");
+                const emoji = RandomEmoji.random();
+
+                while(!emoji.key.startsWith(adjective[0])) {
+                    adjective = Sentencer.make("{{ adjective }}")
+                }
+
+                const clientUuid = adjective + " " + emoji.key;
+
+                //const user = { "name" : clientUuid, "emoji" : emoji.emoji};
+
+                //this.document.users.push(user);
+
+                this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
+                console.log("recieveDocumentUuid called");
             }
 
         }
