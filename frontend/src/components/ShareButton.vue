@@ -29,11 +29,16 @@
         },
         methods: {
             set: function(){
-                const clipboardText = "localhost:8081" + this.$route.fullPath;
+                //adapted from https://stackoverflow.com/a/6042031/6267827
+                const protocol = location.protocol;
+                const slashes = protocol.concat("//");
+                const host = slashes.concat(window.location.hostname);
+
+                const clipboardText = host + ':' + location.port + this.$route.fullPath;
                 this.shareUrl = clipboardText;
             },
             copyUrl: function(){
-                //from https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+                //adapted from https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
                 const el = document.createElement('textarea');
                 el.value = this.shareUrl;
                 el.setAttribute('readonly', '');
