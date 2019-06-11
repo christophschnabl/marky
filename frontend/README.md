@@ -1,5 +1,15 @@
 # frontend
 
+## Docker
+
+### build
+
+docker build -t marky/frontend .
+
+### run
+
+docker run -it -p 8080:8080 --rm --name marky-frontend marky/frontend
+
 ## Project setup
 ```
 npm install
