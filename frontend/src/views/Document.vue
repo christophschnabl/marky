@@ -22,7 +22,7 @@
             </div>
             <Markdown :value="document.markdown" id="print"></Markdown>
         </div>
-        <ShareButton></ShareButton>
+        <ShareButton id = "share"></ShareButton>
     </div>
 </template>
 
@@ -230,5 +230,11 @@
         box-sizing: border-box;
         background: #f6f6f6;
 
+    }
+
+    #share{
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
     }
 </style>

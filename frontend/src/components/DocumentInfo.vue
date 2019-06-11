@@ -23,7 +23,7 @@
         name: "DocumentInfo",
         components: {
             Navigation,
-            UserList
+            UserList,
         },
         props: {
             users: Array,
