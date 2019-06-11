@@ -60,11 +60,24 @@
         created: function () {
             console.log("document loaded or created");
             this.link = this.$route.params.id;
-            this.recieve();
         },
         sockets: {
             connect: function () {
-                this.recieve();
+                let adjective = Sentencer.make("{{ adjective }}");
+                const emoji = RandomEmoji.random();
+
+                while(!emoji.key.startsWith(adjective[0])) {
+                    adjective = Sentencer.make("{{ adjective }}")
+                }
+
+                const clientUuid = adjective + " " + emoji.key;
+
+                //const user = { "name" : clientUuid, "emoji" : emoji.emoji};
+
+                //this.document.users.push(user);
+
+                this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
+                console.log("recieveDocumentUuid called");
             },
             typing: function (data) {
                 this.document.text = data.text;
@@ -109,8 +122,10 @@
                     "text": text,
                     "cursorPosition": cursorPosition
                 };
+                console.log(data);
 
                 this.$socket.emit("typing", data);
+                console.log("typing called");
             },
             renderMarkdown: function () {
                 const obj = {
@@ -179,23 +194,6 @@
             },
             updateDocumentName: function(name){
                 this.document.name = name;
-            },
-            recieve: function(){
-                let adjective = Sentencer.make("{{ adjective }}");
-                const emoji = RandomEmoji.random();
-
-                while(!emoji.key.startsWith(adjective[0])) {
-                    adjective = Sentencer.make("{{ adjective }}")
-                }
-
-                const clientUuid = adjective + " " + emoji.key;
-
-                //const user = { "name" : clientUuid, "emoji" : emoji.emoji};
-
-                //this.document.users.push(user);
-
-                this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
-                console.log("recieveDocumentUuid called");
             }
 
         }

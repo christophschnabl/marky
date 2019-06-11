@@ -19,7 +19,7 @@
         methods: {
             newDocument: function () {
                 const id = uuid.v4();
-                this.$router.replace(`/documents/${id}`);
+                window.location = `/documents/${id}`;
             }
         }
     }
