@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:8
 
 RUN npm install -g http-server
 
