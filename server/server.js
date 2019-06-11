@@ -64,7 +64,17 @@ function getContentForDocument(documentUuid, callback) {
             } else { //document is empty
                 //createDocument
                 roomsWithContents[documentUuid] = "";
-                //save to db? or wait for user to safe document?
+                documentModel = new Document({documentUuid: documentUuid, content: "", name: "Dokument 1"});
+                documentModels.push(documentModel);
+
+                documentModel.save((err, documet) => {
+                    if (err) {
+                        console.error(err);
+                     } else {
+                             console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+                     }
+                });
+
                 callback("");
             }
         });
@@ -133,6 +143,8 @@ function onConnection(clientSocket) {
 
     clientSocket.on("saveDocument", (data) => onDocumentSave(clientSocket, data));
 
+    clientSocket.on("documentNameChange", (documentName => onDocumentNameChanged(clientSocket, documentName)));
+
     clientSocket.on("typing", (typeData) => onTyping(clientSocket, typeData));
 
     clientSocket.on("disconnect", () => onDisconnect(clientSocket));
@@ -142,12 +154,18 @@ function onRecieveDocumentUuid(clientSocket, client) {
     leaveAllButOwnRoom(clientSocket);
     addToClientList(clientSocket.id, client.clientUuid);
     addClientToRoomForDisconnection(clientSocket.id, client.documentUuid);
-
     // join room for requested document
     clientSocket.join(client.documentUuid);
 
     // get inital text for document and send it to the joining client
     getContentForDocument(client.documentUuid, (content) => {
+        /*const document = getDocumentModelForUuid(client.documentUuid);
+        let documentName = "Dokument 1";
+
+        if (document !== undefined) {
+            documentName = document.name;
+        }*/
+
         io.to(client.documentUuid).emit("typing", {"text" : content});
     });
 
@@ -213,6 +231,12 @@ function onDisconnect(clientSocket) { //TODO rooms arent stored anymore here !!!
     removeFromClientList(clientSocket.id);
 }
 
+function onDocumentNameChanged(clientSocket, documentName) {
+    const room = getRoomForClient(clientSocket);
+
+    io.to(room).emit('documentNameChange', documentName);
+}
+
 function onTyping(clientSocket, typeData) {
     const room = getRoomForClient(clientSocket);
 
@@ -234,10 +258,12 @@ function onTyping(clientSocket, typeData) {
         }
     });
 
+    //const documentName = getDocumentModelForUuid(client.documentUuid).name;
+    //console.log(documentName);
 
     data = {
         "text" : typeData.text,
-        "cursorPositions" : cursorPositions
+        "cursorPositions" : cursorPositions,
     };
 
     io.to(room).emit('typing', data);
