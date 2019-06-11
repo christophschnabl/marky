@@ -113,6 +113,7 @@ function getDocumentModelForUuid(documentUuid) {
     return undefined;
 }
 
+
 function addToClientList(clientSocketId, clientUuid) {
     clientSocketIdWithClientUuids.push({"clientSocketId" : clientSocketId, "clientUuid" : clientUuid});
 }
@@ -178,15 +179,21 @@ function onDocumentSave(clientSocket, data) {
     //if model doesnt exist -> create and save new one - TODO create when loading?
     if (documentModel === undefined) {
         documentModel = new Document({documentUuid: documentUuid, content: data.content, name: data.name});
-
+        documentModels.push(documentModel);
     } else { //save existing model
         documentModel.content = data.content;
         documentModel.name = data.name;
     }
 
     documentModel.save((err, documet) => {
-         if (err) return console.error(err);
-         console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+         if (err) {
+             console.error(err);
+             clientSocket.emit("saveStatus", false);
+
+         } else {
+             console.log("Successfully saved " + documentModel.name + " with content: " + documentModel.content + " to db");
+             clientSocket.emit("saveStatus", true);
+         }
     });
 }
 
