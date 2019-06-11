@@ -28,10 +28,6 @@
 
 <style scoped>
     .user-list{
-        position: absolute;
-        right: 16px;
-        bottom: 0;
-        top: 0;
         font-size: 24px;
     }
 

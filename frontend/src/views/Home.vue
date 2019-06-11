@@ -30,13 +30,5 @@
         background: #f1f2f6;
     }
 
-    .logo span {
-        font-size: 84px;
-    }
-
-    .logo-text h1 {
-        font-size: 42px;
-    }
-
 
 </style>

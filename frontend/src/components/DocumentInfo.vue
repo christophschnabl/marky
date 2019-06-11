@@ -11,19 +11,27 @@
                 <Navigation @save="save" @print="print" @download="download"></Navigation>
             </div>
         </div>
-        <UserList :users="users"></UserList>
+        <div class = "user-wrapper uk-flex uk-height-1-1 uk-position-absolute">
+            <UserList :users="users"></UserList>
+            <div class = "divider"></div>
+            <div class = "uk-flex">
+                <ShareButton class = "uk-margin-auto-vertical"></ShareButton>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import Navigation from "./Navigation";
     import UserList from "./UserList";
+    import ShareButton from "../components/ShareButton";
 
     export default {
         name: "DocumentInfo",
         components: {
             Navigation,
             UserList,
+            ShareButton
         },
         props: {
             users: Array,
@@ -91,6 +99,24 @@
     .users{
         position: absolute;
         right: 16px;
+    }
+
+    .user-wrapper{
+        right: 16px;
+        bottom: 0;
+        top: 0;
+    }
+
+
+    .share{
+        margin-left: 32px;
+    }
+
+    .divider{
+        width: 1px;
+        height: 50%;
+        margin: auto 16px auto 0;
+        background: lightgrey;
     }
 
 </style>

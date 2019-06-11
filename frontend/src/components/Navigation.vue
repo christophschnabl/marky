@@ -8,6 +8,9 @@
                 <li class="uk-nav-divider"></li>
                 <li><a v-on:click="download">Download</a></li>
                 <li><a v-on:click="print">Print</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="/" >Back to home</a></li>
+
             </ul>
         </div>
         <button class = "uk-margin-auto-vertical" type="button">Help</button>
