@@ -17,6 +17,7 @@
             </div>
             <Markdown :value="document.markdown" id="print"></Markdown>
         </div>
+        <ShareButton></ShareButton>
     </div>
 </template>
 
@@ -28,6 +29,7 @@
     import Markdown from '../components/Markdown';
     import Toolbar from '../components/Toolbar';
     import DocumentInfo from "../components/DocumentInfo";
+    import ShareButton from "../components/ShareButton";
 
     export default {
         name: "Document",
@@ -35,7 +37,8 @@
         components: {
             DocumentInfo,
             Markdown,
-            Toolbar
+            Toolbar,
+            ShareButton
         },
         data: () => {
             return {
