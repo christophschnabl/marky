@@ -1,3 +1,11 @@
+#Docker
+
+##build
+docker build -t marky/server .
+
+##run
+docker run -p 8080:8080 -d marky/server
+
 #Client - Server Abläufe
 
 ##Verbindungsaufbau Ablauf
@@ -9,6 +17,6 @@
 3.2. Wenn Dokument nicht in db -> dokument in sitzung speichern
 3.3. Dokument existiert offensichtlich nicht -> in db und sitzung anlegen
 
-##Inhalt des Dokuments ändert sich 
+##Inhalt des Dokuments ändert sich
 
 ##Verbindungsabbau Ablauf
