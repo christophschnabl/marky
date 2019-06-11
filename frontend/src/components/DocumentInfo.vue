@@ -53,6 +53,7 @@
         padding: 16px;
         height: 52px;
         position: relative;
+        background: white;
     }
 
     .info-wrapper{

@@ -17,5 +17,6 @@ export default {
 <style>
     body{
       font-family: 'Roboto Slab', serif;
+      background: #f5f5f5;
     }
 </style>

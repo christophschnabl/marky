@@ -20,6 +20,7 @@
     padding: 16px;
     width: 50vw;
     overflow-y: auto;
+    background: white;
 }
 </style>
 <style src="../../node_modules/github-markdown-css/github-markdown.css"></style>
