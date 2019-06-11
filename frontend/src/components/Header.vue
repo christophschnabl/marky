@@ -55,6 +55,7 @@
 
     .new button:hover,.new button:active{
         background: #27ae60;
+        cursor: pointer;
     }
 
 </style>

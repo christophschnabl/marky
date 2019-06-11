@@ -1,7 +1,7 @@
 <template>
     <div class = "socials">
         <div class = "uk-flex social-icons">
-            <a uk-icon="icon:github;ratio:1.1" href = "https://github.com/MatthiasReumann/marky" target="_blank" uk-tooltip="title:GitHub Repository;pos:top"></a>
+            <a uk-icon="icon:github;ratio:1.1" href = "https://github.com/christophschnabl/marky" target="_blank" uk-tooltip="title:GitHub Repository;pos:top"></a>
         </div>
     </div>
 </template>
