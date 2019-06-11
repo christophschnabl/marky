@@ -1,6 +1,9 @@
 <template>
     <div>
-        <button v-on:click="set" class="uk-margin-auto uk-margin-auto-vertical share" type="button" uk-toggle="target: #share-modal">Share Document</button>
+        <button v-on:click="set" class="uk-margin-auto uk-margin-auto-vertical share uk-flex" type="button" uk-toggle="target: #share-modal">
+            <span uk-icon="icon: link" class = "uk-margin-small-right"></span>
+            <p class = "uk-margin-auto-vertical">Share Document</p>
+        </button>
         <div id="share-modal" uk-modal>
             <div class="uk-modal-dialog uk-modal-body">
                 <button class="uk-modal-close-default" type="button" uk-close></button>
