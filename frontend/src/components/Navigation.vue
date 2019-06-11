@@ -3,7 +3,7 @@
         <button class = "uk-margin-auto-vertical" type="button">File</button>
         <div uk-dropdown="mode:click;" class = "uk-margin-remove">
             <ul class="uk-nav uk-dropdown-nav dropdown">
-                <li><a v-on:click="createDocument">New Document</a></li>
+                <li><a :href="newDocumentUrl" target="_blank" v-on:click="refreshUrl()">New Document</a></li>
                 <li><a v-on:click="saveDocument">Save</a></li>
                 <li class="uk-nav-divider"></li>
                 <li><a v-on:click="download">Download</a></li>
@@ -24,11 +24,21 @@
 
     export default {
         name: "Navigation",
+        data: () => {
+            return {
+                newDocumentUrl: ""
+            }
+        },
+        created: function(){
+          this.refreshUrl();
+        },
         methods: {
-            createDocument: function() {
+            newDocument: function () {
                 const id = uuid.v4();
-                console.log(id);
-                this.$router.push(`/documents/${id}`);
+                return `/documents/${id}`;
+            },
+            refreshUrl: function(){
+                this.newDocumentUrl = this.newDocument();
             },
             saveDocument: function() {
                 this.$emit("save");  
@@ -58,6 +68,7 @@
         font-size: 14px;
         font-weight: 400;
         outline: none;
+        background: white;
     }
 
     .navigation button:hover{

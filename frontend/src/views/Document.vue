@@ -191,6 +191,7 @@
             updateDocumentName: function(name){
                 this.document.name = name;
             }
+
         }
     }
 </script>
