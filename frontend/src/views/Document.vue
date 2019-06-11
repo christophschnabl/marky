@@ -51,6 +51,15 @@
         },
         created: function () {
             this.link = this.$route.params.id;
+            let adjective = Sentencer.make("{{ adjective }}");
+            const emoji = RandomEmoji.random();
+
+            while(!emoji.key.startsWith(adjective[0])) {
+                adjective = Sentencer.make("{{ adjective }}")
+            }
+
+            const clientUuid = adjective + " " + emoji.key;
+            this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
         },
         sockets: {
             connect: function () {
@@ -85,9 +94,9 @@
             },
             saveStatus: function(status) {
                 if (status === true) {
-                    alert("Yuhu");
+                    alert("Document saved!");
                 } else {
-                    alert("Irgendwas is hinich! ;(");
+                    alert("RIP");
                 }
 
             },
@@ -121,7 +130,9 @@
                 };
                 axios
                     .post('http://localhost:3000/render', obj)
-                    .then(res => this.document.markdown = res.data)
+                    .then(res => {
+                        this.document.markdown = res.data;
+                    })
                     .catch(function (error) {
                         console.log(error);
                     });
