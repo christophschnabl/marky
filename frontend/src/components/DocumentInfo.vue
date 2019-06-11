@@ -85,7 +85,7 @@
 
     .logo{
         width: 32px;
-        font-size: 22px;
+        font-size: 32px;
     }
 
     .users{
