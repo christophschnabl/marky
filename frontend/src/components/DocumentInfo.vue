@@ -6,7 +6,7 @@
             </div>
             <div class = "uk-height-1-1 info-wrapper">
                 <div class="documentname">
-                    <input :value="documentName">
+                    <input :value="documentName" v-on:input="updateDocumentName($event.target.value);">
                 </div>
                 <Navigation @save="save" @print="print" @download="download"></Navigation>
             </div>
@@ -43,6 +43,9 @@
             },
             save: function(){
                 this.$emit("save");
+            },
+            updateDocumentName: function(name){
+                this.$emit("documentNameChanged",name);
             }
         }
     }
@@ -66,7 +69,8 @@
         color: black;
         margin-bottom: 0;
         outline: none;
-        padding: 2px 4px;
+        padding: 2px 4px 6px;
+        width: 256px;
         border: none;
         border-bottom: 1px solid lightgrey;
     }

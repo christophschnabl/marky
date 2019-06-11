@@ -1,6 +1,11 @@
 <template>
     <div class="document">
-        <DocumentInfo :users="document.users" @save="save" @print="print" @download="download" :documentName="document.name"></DocumentInfo>
+        <DocumentInfo
+                :users="document.users"
+                :documentName="document.name"
+                @save="save" @print="print"
+                @download="download"
+                @documentNameChanged="updateDocumentName"></DocumentInfo>
         <Toolbar @print="print"
                  @bold="insertBold"
                  @italic="insertItalic"
@@ -51,15 +56,6 @@
         },
         created: function () {
             this.link = this.$route.params.id;
-            let adjective = Sentencer.make("{{ adjective }}");
-            const emoji = RandomEmoji.random();
-
-            while(!emoji.key.startsWith(adjective[0])) {
-                adjective = Sentencer.make("{{ adjective }}")
-            }
-
-            const clientUuid = adjective + " " + emoji.key;
-            this.$socket.emit("recieveDocumentUuid", {"clientUuid": clientUuid, "documentUuid": this.link});
         },
         sockets: {
             connect: function () {
@@ -72,7 +68,7 @@
 
                 const clientUuid = adjective + " " + emoji.key;
 
-                const user = { "name" : clientUuid, "emoji" : emoji.emoji};
+                //const user = { "name" : clientUuid, "emoji" : emoji.emoji};
 
                 //this.document.users.push(user);
 
@@ -100,7 +96,7 @@
                 }
 
             },
-            clientLeft: function(client) {
+            /*clientLeft: function(client) {
 
                 /*console.log(this.document.users);
                 this.doucment.users.filter(user =>{
@@ -109,8 +105,8 @@
                     } else {
                         return true;
                     }
-                })*/
-            }
+                })
+            }*/
         },
         methods: {
             textChange: function (text) {
@@ -188,6 +184,9 @@
                     width: 170
                 });
                 doc.save(this.document.name + ".pdf");
+            },
+            updateDocumentName: function(name){
+                this.document.name = name;
             }
         }
     }
