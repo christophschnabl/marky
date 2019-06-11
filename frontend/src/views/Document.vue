@@ -186,8 +186,8 @@
                 const doc = new jsPDF();
                 doc.fromHTML(this.document.markdown, 15, 15, {
                     width: 170
-                });
-                doc.save(this.document.name + ".pdf");
+                }, () => doc.save(this.document.name + ".pdf"));
+
             },
             updateDocumentName: function(name){
                 this.document.name = name;
