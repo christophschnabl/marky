@@ -128,8 +128,11 @@
                 const obj = {
                     text: this.document.text
                 };
+                const protocol = location.protocol;
+                const slashes = protocol.concat("//");
+                const host = slashes.concat(window.location.hostname);
                 axios
-                    .post('http://localhost:3000/render', obj)
+                    .post(host + ':3000/render', obj)
                     .then(res => {
                         this.document.markdown = res.data;
                     })
