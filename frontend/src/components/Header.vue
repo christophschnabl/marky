@@ -5,7 +5,10 @@
             <p class = "uk-margin-auto-vertical">Marky</p>
         </div>
         <div class = "uk-align-right uk-flex uk-height-1-1 new">
-            <button class = "uk-margin-auto-vertical uk-flex" v-on:click="newDocument()"><p class ="uk-margin-auto-vertical">New document</p> <span uk-icon="icon:bolt;"></span></button>
+            <button class = "uk-margin-auto-vertical uk-flex" v-on:click="newDocument()">
+                <p class ="uk-margin-auto-vertical">New document</p>
+                <span uk-icon="icon:bolt;"></span>
+            </button>
         </div>
     </div>
 </template>
@@ -15,6 +18,11 @@
         name: "Header",
         props: {
             newDocument: Function
+        },
+        methods: {
+            documents: function(){
+                this.$router.replace('/documents');
+            }
         }
     }
 </script>

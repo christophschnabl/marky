@@ -20,12 +20,10 @@
 
 <style scoped>
     .footer{
-        position: absolute;
-        bottom: 0;
         width: calc(100% - 64px); /* window - padding*2*/
-        padding: 16px 32px;
-        margin-top: 16px;
+        padding: 32px;
         background: #ffffff;
+        height: 84px;
     }
 
     p {

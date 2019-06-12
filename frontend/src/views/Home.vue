@@ -1,11 +1,11 @@
 <template>
     <div class="home uk-height-1-1 uk-width-1-1" uk-height-viewport>
         <Header :newDocument="newDocument"></Header>
-        <div class = "uk-margin-auto-vertical">
+        <div class = "uk-margin-auto-vertical get-started-wrapper">
         <div class = "get-started uk-flex">
             <div class = "uk-margin-auto">
                 <h1>🐶 Marky</h1>
-                <h3 class = "uk-margin-auto">dkdkdkdkdkdkdkdkdkdkdkdkddkkddkkdkdkdk</h3>
+                <h3 class = "uk-margin-auto">Collaborative Markdown Editing</h3>
             </div>
         </div>
         <div class = "uk-flex uk-margin-top">
@@ -21,6 +21,11 @@
             </div>
         </div>
         </div>
+        <div class ="last-documents width-1-1 uk-padding uk-flex">
+            <div class = "uk-flex uk-width-1-1">
+                <LastDocuments class = "uk-margin-auto-vertical uk-width-1-1"></LastDocuments>
+            </div>
+        </div>
         <Footer></Footer>
     </div>
 </template>
@@ -29,16 +34,32 @@
     import {uuid} from 'vue-uuid';
     import Footer from '../components/Footer'
     import Header from "../components/Header";
+    import LastDocuments from "./LastDocuments";
 
     export default {
         name: "Home",
         components: {
+            LastDocuments,
             Header,
             Footer,
         },
         methods: {
             newDocument: function () {
                 const id = uuid.v4();
+                const ls = window.localStorage.getItem("documents");
+                const date = new Date();
+                const obj = {
+                    id: id,
+                    created: `${date.getDate()}/${date.getMonth()+1}`
+                };
+
+                if(ls !== null){
+                    const items = JSON.parse(ls);
+                    items.push(obj);
+                    window.localStorage.setItem("documents", JSON.stringify(items));
+                }else{
+                    window.localStorage.setItem("documents", JSON.stringify([obj]));
+                }
                 window.location = `/documents/${id}`;
             }
         }
@@ -50,8 +71,12 @@
         background: #f1f2f6;
     }
 
+    .get-started-wrapper{
+        height: 50vh;
+    }
+
     .get-started{
-        margin-top: 10%;
+        margin-top: 25%;
     }
 
     .get-started h1{
@@ -88,6 +113,12 @@
 
     button:nth-child(n+2){
         margin-left: 16px;
+    }
+
+    .last-documents{
+        margin-top: 128px;
+        background: #dfe4ea;
+        height: 50vh;
     }
 
 </style>
