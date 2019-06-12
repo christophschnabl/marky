@@ -2,20 +2,25 @@
 
 markymd.io
 
-Marky is an Open-Source Markdown Editor.
+Marky is an Open-Source Collaborative Markdown Editor.
 
 # Features
 * Create and share Markdown Documents (via share link)
-* Render Markdown to html
+* Render Markdown to HTML
 * Random User Names based on Adjectives and Emojis
+* Insert Markdown via ToolButtons (Bold, Italic, Strikethrough, Table, List, Code, ...)
+* Overview of your recent Documents
 * Save Documents
 * Print Documents
+* List of Active Users
 * No Login as we do not want to save personal data!
 
 # Known Issues
 * Multiple Cursor positions on server, but no different positions in GUI
-* Router not working properly with docker-compose.
+* Router not working properly with docker-compose
 * ClientLeft Event does not always get triggered
+* Document Names sometimes do not synchronise themselves
+
 
 # Run
 
