@@ -1,26 +1,17 @@
-FROM alpine:3.9
+# build stage
+FROM node:lts-alpine as build-stage
+WORKDIR /app
 
-RUN apk add --update nginx nodejs npm bash
+RUN apk add --no-cache make gcc g++ python
 
-RUN mkdir -p /tmp/nginx/marky
-RUN mkdir -p /var/log/nginx
-RUN mkdir -p /var/www/html
-
-COPY /nginx_config/nginx.conf /etc/nginx/nginx.conf
-COPY /nginx_config/default.conf /etc/nginx/conf.d/default.conf
-
-WORKDIR /tmp/nginx/marky
-
-COPY . .
-
+COPY package*.json ./
 RUN npm install
+COPY . .
 
 RUN npm run build
 
-RUN npm start
-
-RUN cp -r dist/* /var/www/html
-
-RUN chown nginx:nginx /var/www/html
-
+# production stage
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
