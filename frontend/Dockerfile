@@ -1,6 +1,6 @@
 FROM node:8
 
-RUN npm install -g http-server
+#RUN npm install -g http-server
 
 WORKDIR /app
 
@@ -13,4 +13,5 @@ COPY . .
 RUN npm run build
 
 EXPOSE 8080
-CMD [ "http-server", "dist" ]
+#CMD [ "http-server", "dist" ]
+CMD [ "npm", "start"]
