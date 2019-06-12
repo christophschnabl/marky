@@ -30,7 +30,7 @@
         },
         methods: {
             redirect: function (id) {
-                this.$router.replace(`/documents/${id}`);
+                window.location = `/documents/${id}`;
             }
         }
     }

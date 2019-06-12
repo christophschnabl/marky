@@ -20,12 +20,16 @@ const options = {
 
 Vue.config.productionTip = false
 
+const protocol = location.protocol;
+const slashes = protocol.concat("//");
+const host = slashes.concat(window.location.hostname);
+
 Vue.use(require('vue-shortkey'))
 Vue.use(VueHtmlToPaper, options);
 Vue.use(UUID);
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: 'http://localhost:3000',
+    connection: host + ':3000',
     vuex: {
         actionPrefix: 'SOCKET_',
         mutationPrefix: 'SOCKET_'

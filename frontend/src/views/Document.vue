@@ -51,7 +51,7 @@
                     users: [
                     ]
                 },
-                link: "empty-link",
+                link: "empty-link"
             }
         },
         created: function () {
