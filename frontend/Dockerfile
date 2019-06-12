@@ -1,17 +1,26 @@
-FROM node:8
+FROM alpine:3.9
 
-#RUN npm install -g http-server
+RUN apk add --update nginx nodejs npm bash
 
-WORKDIR /app
+RUN mkdir -p /tmp/nginx/marky
+RUN mkdir -p /var/log/nginx
+RUN mkdir -p /var/www/html
 
-COPY package*.json ./
+COPY /nginx_config/nginx.conf /etc/nginx/nginx.conf
+COPY /nginx_config/default.conf /etc/nginx/conf.d/default.conf
 
-RUN npm install
+WORKDIR /tmp/nginx/marky
 
 COPY . .
 
-#RUN npm run build
+RUN npm install
 
-EXPOSE 8080
-#CMD [ "http-server", "dist" ]
-CMD [ "npm", "start"]
+RUN npm run build
+
+RUN npm start
+
+RUN cp -r dist/* /var/www/html
+
+RUN chown nginx:nginx /var/www/html
+
+CMD ["nginx", "-g", "daemon off;"]
