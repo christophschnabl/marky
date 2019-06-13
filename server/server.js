@@ -159,14 +159,17 @@ function onRecieveDocumentUuid(clientSocket, client) {
 
     // get inital text for document and send it to the joining client
     getContentForDocument(client.documentUuid, (content) => {
-        /*const document = getDocumentModelForUuid(client.documentUuid);
+        const document = getDocumentModelForUuid(client.documentUuid);
         let documentName = "Dokument 1";
 
         if (document !== undefined) {
             documentName = document.name;
-        }*/
+        }
 
-        io.to(client.documentUuid).emit("typing", {"text" : content});
+        io.to(client.documentUuid).emit("typing", {
+            "text" : content,
+            "name": documentName
+        });
     });
 
     // get all users for this document
