@@ -22,6 +22,8 @@
 </template>
 
 <script>
+    import {URL} from '../helper.js';
+
     export default {
         name: "ShareButton",
         data: function(){
@@ -37,7 +39,7 @@
                 const slashes = protocol.concat("//");
                 const host = slashes.concat(window.location.hostname);
 
-                const clipboardText = host + ':' + location.port + this.$route.fullPath;
+                const clipboardText = URL(location.port) + this.$route.fullPath;
                 this.shareUrl = clipboardText;
             },
             copyUrl: function(){

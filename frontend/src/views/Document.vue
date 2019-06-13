@@ -35,6 +35,10 @@
     import Toolbar from '../components/Toolbar';
     import DocumentInfo from "../components/DocumentInfo";
 
+    import {URL} from '../helper.js'
+
+
+
     export default {
         name: "Document",
         props: {},
@@ -46,7 +50,7 @@
         data: () => {
             return {
                 document: {
-                    name: "Dokument 1",
+                    name: "",
                     text: "",
                     markdown: "",
                     users: [
@@ -77,10 +81,7 @@
                 console.log("recieveDocumentUuid called");
             },
             typing: function (data) {
-                if(data.name !== undefined){
-                    console.log("set document name");
-                    this.document.name = data.name;
-                }
+                this.document.text = data.text;
 
                 //set cursor position here @MR ->
                 console.log(data.cursorPositions);
@@ -125,7 +126,6 @@
                     "text": text,
                     "cursorPosition": cursorPosition
                 };
-                console.log(data);
 
                 this.$socket.emit("typing", data);
                 console.log("typing called");
@@ -134,12 +134,10 @@
                 const obj = {
                     text: this.document.text
                 };
-                const protocol = location.protocol;
-                const slashes = protocol.concat("//");
-                const host = slashes.concat(window.location.hostname);
                 axios
-                    .post(host + ':3000/render', obj)
+                    .post(URL("3000") + '/render', obj)
                     .then(res => {
+                        console.log(res.data);
                         this.document.markdown = res.data;
                     })
                     .catch(function (error) {
