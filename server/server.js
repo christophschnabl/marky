@@ -167,9 +167,10 @@ function onRecieveDocumentUuid(clientSocket, client) {
         }
 
         io.to(client.documentUuid).emit("typing", {
-            "text" : content,
-            "name": documentName
+            "text" : content
         });
+
+        onDocumentNameChanged(clientSocket,documentName); //send documentname to client
     });
 
     // get all users for this document
