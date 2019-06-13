@@ -1,4 +1,4 @@
-# [Marky](markymd.io) 🐶 Collaborative Markdown Editing
+# [Marky🐶 Collaborative Markdown Editing]((https://www.markymd.io) 
 
 
 Marky is an Open-Source Collaborative Markdown Editor.
