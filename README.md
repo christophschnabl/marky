@@ -1,6 +1,5 @@
-# Marky 🐶 Collaborative Markdown Editing
+# [Marky](markymd.io) 🐶 Collaborative Markdown Editing
 
-markymd.io
 
 Marky is an Open-Source Collaborative Markdown Editor.
 
