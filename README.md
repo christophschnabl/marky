@@ -24,11 +24,17 @@ Marky is an Open-Source Collaborative Markdown Editor.
 # Run
 
 ## Without Docker
-1. Navigate to the server directory by typing cd server and launch the app with npm start
-2. Navigate to the frontend directory by typing cd frontend and launch the vue app with npm start
+1. Navigate to the server directory
+    `cd server`
+2. Launch it 
+    `npm start`
+3. Navigate to the frontend directory
+    `cd frontend` 
+4. Launch the vue app 
+    `npm start`
 
 ## Docker
 Make sure you have docker as well as docker compose installed
-    docker-compose up
+    `docker-compose up
 
 # Contribute
