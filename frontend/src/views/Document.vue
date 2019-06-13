@@ -56,7 +56,6 @@
             }
         },
         created: function () {
-            console.log("document loaded or created");
             this.link = this.$route.params.id;
         },
         sockets: {
@@ -78,7 +77,10 @@
                 console.log("recieveDocumentUuid called");
             },
             typing: function (data) {
-                this.document.text = data.text;
+                if(data.name !== undefined){
+                    console.log("set document name");
+                    this.document.name = data.name;
+                }
 
                 //set cursor position here @MR ->
                 console.log(data.cursorPositions);
@@ -99,6 +101,9 @@
                 }
 
             },
+            documentNameChange: function(name){
+                this.document.name = name;
+            }
             /*clientLeft: function(client) {
 
                 /*console.log(this.document.users);
@@ -195,6 +200,7 @@
             },
             updateDocumentName: function(name){
                 this.document.name = name;
+                this.$socket.emit("documentNameChange", name);
             }
 
         }

@@ -53,6 +53,7 @@
                 this.$emit("save");
             },
             updateDocumentName: function(name){
+                console.log("document name has changed");
                 this.$emit("documentNameChanged",name);
             }
         }
