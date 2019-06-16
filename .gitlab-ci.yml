@@ -2,14 +2,13 @@ image: node:latest
 
 stages:
 - build
-- test
-
 
 cache:
   paths:
   - server/node_modules/
+  - frontend/node_modules/
 
-install_dependencies:
+build_server:
   stage: build
   script:
   - cd server/
@@ -18,9 +17,13 @@ install_dependencies:
     paths:
     - server/node_modules/
 
-
-testing_testing:
-  stage: test
+build_frontend:
+  stage: build
   script:
-  - cd server/
-  - npm test
+  - cd frontend/
+  - npm install
+  artifacts:
+    paths:
+    - frontend/node_modules/
+
+
