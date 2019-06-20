@@ -6,12 +6,9 @@ const documentSchema = new mongoose.Schema({
       unique: true,
   },
   name: {
-     type: String 
+     type: String
   },
   content: {
-      type: String
-  },
-  ownerUuid : {
       type: String
   }
 });

@@ -1,28 +1,3 @@
-//Packages
-const express = require("express");
-const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
-const bodyparser = require('body-parser');
-const cors = require('cors');
-
-//Modules
-const mongoose = require('./modules/mongoose');
-
-//Models
-const Document = require("./models/document");
-
-//Constants
-const port = process.env.PORT || 3000;
-
-
-mongoose.connect();
-
-app.use(cors());
-app.options('*', cors());
-
-app.use(bodyparser.json());
-
 let documentModels = [];
 let roomsWithContents = {};
 let clientSocketIdWithClientUuids = [];
@@ -264,7 +239,3 @@ function onTyping(clientSocket, typeData) {
 
     io.to(room).emit('typing', data);
 }
-
-io.on("connection", onConnection);
-
-app.listen(port, () => console.log("server listening on port " + port));
