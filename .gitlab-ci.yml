@@ -1,5 +1,10 @@
+image: docker:latest
+
 variables:
   DOCKER_IMAGE_TAGGED: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+services:
+- docker:dind
 
 stages:
 - build
