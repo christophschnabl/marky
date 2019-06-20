@@ -5,18 +5,16 @@ const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 const routes = require('./routes/routes.js');
 const bodyparser = require('body-parser');
-const mongoose = require("mongoose");
 const cors = require('cors');
-const Document = require("./models/document.js");
+const mongoose = require('./modules/mongoose');
+
+const Document = require("./models/document");
+
+mongoose.connect();
+
 app.use(cors());
 app.options('*', cors());
 
-
-//todo auslagern
-mongoose.connect("mongodb+srv://s6:cigqec-3xiWse-jecjat@s6-0tzyv.gcp.mongodb.net/marky?retryWrites=true&w=majority",  { useNewUrlParser: true } )
-    .then(() =>  console.log("connection successful"))
-    .catch((err) => console.error(err))
-;
 app.use(bodyparser.json());
 app.use(express.static("client"));
 app.use("/", routes);
@@ -261,9 +259,6 @@ function onTyping(clientSocket, typeData) {
             cursorPositions[cursorPositionSaved] = {name : uuid, cursorPosition : typeData.cursorPosition};
         }
     });
-
-    //const documentName = getDocumentModelForUuid(client.documentUuid).name;
-    //console.log(documentName);
 
     data = {
         "text" : typeData.text,
