@@ -1,29 +1,13 @@
-image: node:latest
+variables:
+  DOCKER_IMAGE_TAGGED: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
 stages:
 - build
 
-cache:
-  paths:
-  - server/node_modules/
-  - frontend/node_modules/
-
-build_server:
+build_images:
   stage: build
   script:
-  - cd server/
-  - npm install
-  artifacts:
-    paths:
-    - server/node_modules/
-
-build_frontend:
-  stage: build
-  script:
-  - cd frontend/
-  - npm install
-  artifacts:
-    paths:
-    - frontend/node_modules/
-
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker-compose build
+    - docker-compose push matthiasreumann/marky:$DOCKER_IMAGE_TAGGED
 
