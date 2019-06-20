@@ -1,22 +1,29 @@
-image: docker:latest
-
-variables:
-  DOCKER_IMAGE_TAGGED: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-
-services:
-- docker:dind
+image: ubuntu
 
 stages:
-- build
+- deploy
 
 before_script:
-- apk add --no-cache py-pip python-dev libffi-dev openssl-dev gcc libc-dev make
-- pip install docker-compose
+# install ssh-agent
+- 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+- eval $(ssh-agent -s)
 
-build_images:
-  stage: build
+#add private ky to agent store
+- echo "$SSH_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
+# create ~/.ssh folder
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+
+
+- ssh-keyscan 209.250.238.165 >> ~/.ssh/known_hosts
+- chmod 644 ~/.ssh/known_hosts
+
+deploy_:
+  stage: deploy
+  environment: Staging
+  only:
+  - master
   script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    - docker-compose build
-    - docker-compose push matthiasreumann/marky:$DOCKER_IMAGE_TAGGED
-
+  # connect to server
+  - ssh hansidep@209.250.238.165 "rm -rf * && git clone https://github.com/christophschnabl/marky.git && cd marky && docker-compose build && docker-compose up && exit"
